@@ -48,7 +48,7 @@ private:
 
 public:
     /// 直接在构造函数中就可以进行社团发现了！
-    LPA(network<Node_T,Weight_T> net);
+    LPA(network<Node_T,Weight_T> net,bool WeightedFlag = true);
     /// 获取每一个节点的标签信息
     std::map<Node_T,std::string> label_results();
     /// 获取当前节点的标签信息

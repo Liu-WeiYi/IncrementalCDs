@@ -47,7 +47,7 @@ const std::set<Node_T> network<Node_T,Weight_T>::nodes() {
  * @param src         --- 源节点
  * @param dst         --- 目的节点
  * @param weight      --- 权重
- * @param direct_flag --- 该条边是否为有向边
+ * @param direct_flag --- 该条边是否为有向边 其中 false 代表无向边
  */
 template <class Node_T, class Weight_T>
 void network<Node_T,Weight_T>::add_edge(Node_T src, Node_T dst, Weight_T weight, bool direct_flag) {

@@ -11,7 +11,7 @@
 using namespace std;
 
 map<int, vector<string>>
-edge_list_parser(char *filename, string name = "");
+edge_list_parser(string filename, string network_name="");
 
 
 
