@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "networks.h"
 #include "edge_list_parser.h"
 #include "Label_Propagation.h"
@@ -73,6 +74,16 @@ int main(int argc, char *argv[]){
         std::vector<std::set<std::string> > communities = lpa1.community();
         /// 4. 输出社团结果
         showCommunities(communities);
+        // 5.  输出社团结果于文件中
+        string output_filename = filename+".com";
+        ofstream fout(output_filename);
+        for (int i=0; i<communities.size(); i++){
+            for (auto node: communities[i]){
+                fout << node << " ";
+            }
+            fout << "\n";
+        }
+        fout.close();
     }
 
     return 0;

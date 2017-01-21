@@ -9,6 +9,8 @@
 /Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/LPA_Entrance.cpp
 iostream
 -
+fstream
+-
 networks.h
 /Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/networks.h
 edge_list_parser.h
