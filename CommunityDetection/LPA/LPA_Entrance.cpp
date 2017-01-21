@@ -6,7 +6,7 @@
 using namespace std;
 
 
-network<std::string,double> createLayer(std::map<int, vector<string>> edge_file, std::string name){
+network<std::string,double> createLayer(std::map<int, vector<string> > edge_file, std::string name){
     network<std::string,double> network;
     network.setName(name);
     set<string> node_list_tmp;
@@ -34,7 +34,7 @@ network<std::string,double> createLayer(std::map<int, vector<string>> edge_file,
     return  network;
 };
 
-void showCommunities(std::vector<std::set<std::string>> community){
+void showCommunities(std::vector<std::set<std::string> > community){
     std::cout << "\n ------ ------ ------ ------ ------\n";
     std::cout << "\nCommunity Output:\n";
 
@@ -65,12 +65,12 @@ int main(int argc, char *argv[]){
         cout << "\nprocessing file: " << filename << "\tweighted: " << weightedFlag << endl;
 
         /// 1. 生成edge文件
-        std::map<int, vector<string>> edge_file = edge_list_parser(filename,filename);
+        std::map<int, vector<string> > edge_file = edge_list_parser(filename,filename);
         /// 2. 构成网络
         network<std::string,double> layer = createLayer(edge_file, filename);
         /// 3. 调用LPA算法
         LPA<std::string,double> lpa1(layer, weightedFlag);
-        std::vector<std::set<std::string>> communities = lpa1.community();
+        std::vector<std::set<std::string> > communities = lpa1.community();
         /// 4. 输出社团结果
         showCommunities(communities);
     }

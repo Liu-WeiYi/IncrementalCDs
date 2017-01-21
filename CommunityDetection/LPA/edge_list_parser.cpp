@@ -14,9 +14,9 @@ using namespace std;
  * @param name      --- 指定返回网络的名称, 默认不指定, 为""
  * @return
  */
-map<int, vector<string>> edge_list_parser(string filename, string network_name){
+map<int, vector<string> > edge_list_parser(string filename, string network_name){
 
-    map<int, vector<string>> edge_file;
+    map<int, vector<string> > edge_file;
 
     ifstream inFile;
     inFile.open(filename);

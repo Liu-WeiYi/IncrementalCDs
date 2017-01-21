@@ -135,9 +135,9 @@ LPA<Node_T,Weight_T>::LPA(network<Node_T, Weight_T> net, bool WeightedFlag) {
     }
 
     // 输出每一个节点的标签信息
-    for (auto node_it = nodes.begin(); node_it != nodes.end(); node_it++){
-        std::cout << "node "<< *node_it << ";\tlabel: " << node_label[*node_it] << std::endl;
-    }
+//    for (auto node_it = nodes.begin(); node_it != nodes.end(); node_it++){
+//        std::cout << "node "<< *node_it << ";\tlabel: " << node_label[*node_it] << std::endl;
+//  }
 
     // 将边的划分结果进行保存结果进行保存
     this->node_label_map = node_label;
@@ -163,10 +163,10 @@ std::string LPA<Node_T,Weight_T>::label_results(Node_T node) {
 
 
 template <class Node_T, class Weight_T>
-std::vector<std::set<Node_T>> LPA<Node_T,Weight_T>::community() {
-    std::vector<std::set<Node_T>> community; // 初始化这个社团
+std::vector<std::set<Node_T> > LPA<Node_T,Weight_T>::community() {
+    std::vector<std::set<Node_T> > community; // 初始化这个社团
 
-    std::map<std::string, std::set<Node_T>> label_2_nodes;
+    std::map<std::string, std::set<Node_T> > label_2_nodes;
 
     // 1. 获取所有label
     for (auto label_it = this->node_label_map.begin();label_it != this->node_label_map.end(); label_it++){

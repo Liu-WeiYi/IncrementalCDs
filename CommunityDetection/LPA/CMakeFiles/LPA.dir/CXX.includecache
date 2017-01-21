@@ -1,0 +1,64 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/LPA_Entrance.cpp
+iostream
+-
+networks.h
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/networks.h
+edge_list_parser.h
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/edge_list_parser.h
+Label_Propagation.h
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/Label_Propagation.h
+
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/Label_Propagation.h
+networks.h
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/networks.h
+Label_Propagation.tpp
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/Label_Propagation.tpp
+
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/Label_Propagation.tpp
+Label_Propagation.h
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/Label_Propagation.h
+
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/edge_list_parser.cpp
+edge_list_parser.h
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/edge_list_parser.h
+iostream
+-
+fstream
+-
+cstdlib
+-
+
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/edge_list_parser.h
+string
+-
+vector
+-
+map
+-
+
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/networks.h
+iostream
+-
+vector
+-
+set
+-
+map
+-
+string
+-
+networks.tpp
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/networks.tpp
+
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/networks.tpp
+networks.h
+/Users/weiyiliu/Documents/My Work at IBM/0. MySourceCode/IncrementalCDs/CommunityDetection/LPA/networks.h
+

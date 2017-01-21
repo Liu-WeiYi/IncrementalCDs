@@ -10,7 +10,7 @@
 #include <map>
 using namespace std;
 
-map<int, vector<string>>
+map<int, vector<string> >
 edge_list_parser(string filename, string network_name="");
 
 

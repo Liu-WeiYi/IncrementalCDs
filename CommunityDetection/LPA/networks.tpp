@@ -65,7 +65,7 @@ void network<Node_T,Weight_T>::add_edge(Node_T src, Node_T dst, Weight_T weight,
     } else {
         // 表明当前点不存在于EdgeList中
         // 下面需要创建该节点到边列表的映射
-        std::vector<std::map<Node_T,Weight_T>> src_map;
+        std::vector<std::map<Node_T,Weight_T> > src_map;
         src_map.push_back(dst_weight);
         this->edge_list[src] = src_map;
     }
@@ -86,7 +86,7 @@ void network<Node_T,Weight_T>::add_edge(Node_T src, Node_T dst, Weight_T weight,
         } else {
             // 表明当前点不存在于EdgeList中
             // 下面需要创建该节点到边列表的映射
-            std::vector<std::map<Node_T,Weight_T>> dst_map;
+            std::vector<std::map<Node_T,Weight_T> > dst_map;
             dst_map.push_back(src_weight);
             this->edge_list[dst] = dst_map;
         }
@@ -97,7 +97,7 @@ void network<Node_T,Weight_T>::add_edge(Node_T src, Node_T dst, Weight_T weight,
  * @return edge_list
  */
 template <class Node_T, class Weight_T>
-const std::map<Node_T,std::vector<std::map<Node_T,Weight_T>>> network<Node_T,Weight_T>::edges() {
+const std::map<Node_T,std::vector<std::map<Node_T,Weight_T> > > network<Node_T,Weight_T>::edges() {
     return this->edge_list;
 }
 /**
@@ -106,7 +106,7 @@ const std::map<Node_T,std::vector<std::map<Node_T,Weight_T>>> network<Node_T,Wei
  * @return edges
  */
 template <class Node_T, class Weight_T>
-const std::vector<std::map<Node_T,Weight_T>> network<Node_T,Weight_T>::current_edges(Node_T node) {
+const std::vector<std::map<Node_T,Weight_T> > network<Node_T,Weight_T>::current_edges(Node_T node) {
     return this->edge_list[node];
 }
 
@@ -119,7 +119,7 @@ template <class Node_T, class Weight_T>
 std::set<Node_T> network<Node_T,Weight_T>::neighbors(Node_T node) {
     std::set<Node_T> neighbors;
     for (int i = 0; i < this->edge_list[node].size(); ++i) {
-        std::vector<std::map<Node_T,Weight_T>> currentNeighbors = edge_list[node];
+        std::vector<std::map<Node_T,Weight_T> > currentNeighbors = edge_list[node];
         for (int j = 0; j < currentNeighbors.size(); ++j) {
             std::map<Node_T,Weight_T> neighbor_weight_map = currentNeighbors[j];
             auto it = neighbor_weight_map.begin();
@@ -138,7 +138,7 @@ template <class Node_T, class Weight_T>
 Weight_T network<Node_T,Weight_T>::get_weight(Node_T src, Node_T dst) {
     Weight_T weight = (Weight_T)0; // 设置初始值就是0哈
 
-    std::vector<std::map<Node_T,Weight_T>> dst_info_list = this->edge_list[src];
+    std::vector<std::map<Node_T,Weight_T> > dst_info_list = this->edge_list[src];
     for (int i = 0; i < dst_info_list.size(); ++i) {
         std::map<Node_T,Weight_T> dst_info_map = dst_info_list[i];
         auto dst_it = dst_info_map.begin();
@@ -157,7 +157,7 @@ Weight_T network<Node_T,Weight_T>::get_weight(Node_T src, Node_T dst) {
 // ------------------------------------------------------------------------
 
 template <class Node_T, class Weight_T>
-MultiNetwork<Node_T,Weight_T>::MultiNetwork(std::vector<network<Node_T, Weight_T>> layers) {
+MultiNetwork<Node_T,Weight_T>::MultiNetwork(std::vector<network<Node_T, Weight_T> > layers) {
     // 获取初始化每一个网络
     this->layer_list = layers;
     // 获取当前多网络中的所有节点
@@ -173,7 +173,7 @@ MultiNetwork<Node_T,Weight_T>::MultiNetwork(std::vector<network<Node_T, Weight_T
  * @return layer_list
  */
 template <class Node_T, class Weight_T>
-std::vector<network<Node_T,Weight_T>> MultiNetwork<Node_T,Weight_T>::layers() {
+std::vector<network<Node_T,Weight_T> > MultiNetwork<Node_T,Weight_T>::layers() {
     return this->layer_list;
 }
 /**
@@ -232,7 +232,7 @@ void MultiNetwork<Node_T,Weight_T>::__get_CN_GN_Neighbors() {
         }
 
         // 生成当前节点的CN和GN关系，并存储在neighbor信息中
-        std::vector<std::set<Node_T>> CN_GN;
+        std::vector<std::set<Node_T> > CN_GN;
         CN_GN.push_back(CN);
         CN_GN.push_back(GN);
         this->neighbors[node] = CN_GN;
@@ -246,7 +246,7 @@ void MultiNetwork<Node_T,Weight_T>::__get_CN_GN_Neighbors() {
  * @return neighbors
  */
 template <class Node_T, class Weight_T>
-std::map<Node_T,std::vector<std::set<Node_T>>> MultiNetwork<Node_T,Weight_T>::CN_GN() {
+std::map<Node_T,std::vector<std::set<Node_T> > > MultiNetwork<Node_T,Weight_T>::CN_GN() {
     return this->neighbors;
 }
 /**
@@ -298,7 +298,7 @@ network<Node_T,Weight_T> MultiNetwork<Node_T,Weight_T>::merging_all_layers() {
     for (int i = 0; i < nodes.size(); ++i) {
         // 2.0 获取当前 源节点
         Node_T src = nodes[i];
-        std::vector<std::set<Node_T>> CN_GN_info = this->neighbors[src];
+        std::vector<std::set<Node_T> > CN_GN_info = this->neighbors[src];
 
         // 2.1 获取当前节点在多网络中的所有邻居关系
         std::set<Node_T> GN = CN_GN_info[1];

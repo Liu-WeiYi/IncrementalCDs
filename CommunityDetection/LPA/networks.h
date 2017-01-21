@@ -65,7 +65,7 @@ private:
     /// 节点列表
     std::set<Node_T> node_list;
     /// 边, 采用当前节点像其它点的映射（为了查找速度快！）
-    std::map<Node_T, std::vector<std::map<Node_T,Weight_T>>> edge_list;
+    std::map<Node_T, std::vector<std::map<Node_T,Weight_T> > > edge_list;
 
 public:
     /// 设置/获取当前网络的名称
@@ -82,8 +82,8 @@ public:
     ///  操作边
     /// ------------------------------------------------
     void add_edge(Node_T,Node_T,Weight_T,bool);
-    const std::map<Node_T,std::vector<std::map<Node_T,Weight_T>>> edges();
-    const std::vector<std::map<Node_T,Weight_T>> current_edges(Node_T);
+    const std::map<Node_T,std::vector<std::map<Node_T,Weight_T> > > edges();
+    const std::vector<std::map<Node_T,Weight_T> > current_edges(Node_T);
 
     /// ------------------------------------------------
     ///  获取给定节点的邻居
@@ -115,8 +115,8 @@ class MultiNetwork{
      *
      */
 private:
-    std::vector<network<Node_T,Weight_T>>            layer_list;                    // 层列表
-    std::map<Node_T,std::vector<std::set<Node_T>>>   neighbors;                     // 邻居关系
+    std::vector<network<Node_T,Weight_T> >            layer_list;                    // 层列表
+    std::map<Node_T,std::vector<std::set<Node_T> > >   neighbors;                     // 邻居关系
     std::set<Node_T>                                 node_list;                     // 所有的节点
     std::map<Node_T,double>                          node_overlap_rate;             // 每一个节点的overlap rate
     network<Node_T,Weight_T>                         Directed_Weighted_MergedGraph; // 由该多网络生成的Merged Network
@@ -129,13 +129,13 @@ private:
 
 public:
     /// 创建该多网络
-    MultiNetwork(std::vector<network<Node_T,Weight_T>> layers);
+    MultiNetwork(std::vector<network<Node_T,Weight_T> > layers);
     /// 获取该多网络的所有网络
-    std::vector<network<Node_T,Weight_T>> layers();
+    std::vector<network<Node_T,Weight_T> > layers();
     /// 获取该多网络的所有节点集合
     std::set<Node_T> nodes();
     /// 获取该多网络的邻居关系
-    std::map<Node_T,std::vector<std::set<Node_T>>> CN_GN();
+    std::map<Node_T,std::vector<std::set<Node_T> > > CN_GN();
     /// 获取每一个节点与之对应的Overlap Rate
     double overlap_rate(Node_T);
     /// 获取当前多网络的融合网络

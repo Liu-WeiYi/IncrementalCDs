@@ -54,7 +54,7 @@ public:
     /// 获取当前节点的标签信息
     std::string label_results(Node_T);
     /// 当前网络的社团信息
-    std::vector<std::set<Node_T>> community();
+    std::vector<std::set<Node_T> > community();
 };
 
 #include "Label_Propagation.tpp"
