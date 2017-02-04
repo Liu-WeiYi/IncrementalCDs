@@ -12,7 +12,7 @@ from scipy.special import comb
 class FindRoute(object):
     def __init__(self, file_dir):
         self.file_dir = file_dir
-        self.threshold = 0.4
+        self.threshold = 4
     
     def PairFile(self):
         '''Pair the files in the directory from day to day'''
@@ -52,23 +52,29 @@ class FindRoute(object):
         G2_node = set(self.G2.nodes())
         G1_edge = set(self.G1.edges())
         self.G2_edge = set(self.G2.edges())
-        add_nodes = list(G2_node - G1_node)
+        self.add_nodes = list(G2_node - G1_node)
         del_nodes = list(G1_node - G2_node)
-        c_nodes = add_nodes + del_nodes
         add_edges = list(self.G2_edge - G1_edge)
         del_edges = list(G1_edge - self.G2_edge)
         all_changes = {}
-        all_changes.update({_: [__ for __ in self.G2.neighbors(_) if __ in G1_node] for _ in add_nodes})
+        # added and deleted nodes
+        # any neighbors of newly-added nodes should be influenced
+        all_changes.update({_: [__ for __ in self.G2.neighbors(_) if __ in G1_node] for _ in self.add_nodes})
+        # any neighbors of deleted nodes should be influenced if the neighbors still in G2
+        # we remove the del nodes and starts with its neighbors
         del_ndoes_influence = {_: self.G1.neighbors(_) for _ in del_nodes}
-        all_changes.update({i: [k for k in j if k in G2_node] for i, j in del_ndoes_influence.items()})
+        del_nodes_still_nodes = [k for i, j in del_ndoes_influence.items() for k in j if k in G2_node]
+        remove_new_nodes = {i: self.G2.neighbors(i) for i in del_nodes_still_nodes if i in G2_node}
+        all_changes.update({i: [k for k in j if k in G1_node] for i, j in remove_new_nodes.items()})
+        # all_changes.update({i: self.G2.neighbors(i) for i in del_nodes_still_nodes if i in G2_node})
         if add_edges:
-            add_nodes_links = [(_, __) for _ in add_nodes for __ in self.G2.neighbors(_)]
+            add_nodes_links = [(_, __) for _ in self.add_nodes for __ in self.G2.neighbors(_)]
             add_edges = list(set(add_edges) - set(add_nodes_links) - set(tuple(reversed(i)) for i in add_nodes_links))
             try:
                 add_edges_n = [_[__] for _ in add_edges for __ in range(2)]
                 add_edges_n = list(set(add_edges_n))
                 add_edges_n_nei = {_: self.G2.neighbors(_) for _ in add_edges_n}
-                all_changes.update({i: [k for k in j if k not in add_nodes] for i, j in add_edges_n_nei.items()})
+                all_changes.update({i: [k for k in j if k not in self.add_nodes] for i, j in add_edges_n_nei.items()})
             except:
                 pass
         if del_edges:
@@ -77,21 +83,21 @@ class FindRoute(object):
             try:
                 del_edges_n = [_[__] for _ in del_edges for __ in range(2)]
                 del_edges_n = list(set(del_edges_n))
-                all_changes.update({_: [__ for __ in temp.G2.neighbors(_) if __ not in add_nodes] for _ in del_edges_n})
+                all_changes.update({_: [__ for __ in self.G2.neighbors(_) if __ not in self.add_nodes] for _ in del_edges_n})
             except:
                 pass
         all_changes = {i:j for i,j in all_changes.items() if j != []}
-        return all_changes, c_nodes
+        return all_changes
     
     def FindSameCom(self, Com_result, file1, file2):
         '''Check whether the changes'''
         # input: community resule file, paired file
         # output {1: [2, 3], 2: [3, 4]}
         com_map = self.LoadCommunityFile(Com_result)
-        all_changes, c_nodes = self.FindChanges(file1, file2)
+        all_changes = self.FindChanges(file1, file2)
         layer = {}
-        # layer.update({i: j for i, j in all_changes.items() if i in c_nodes})
-        layer.update({i: [k for k in j if com_map[i] == com_map[k]] for i, j in all_changes.items() if i not in c_nodes})
+        layer.update({i: j for i, j in all_changes.items() if i in self.add_nodes})
+        layer.update({i: [k for k in j if com_map[i] == com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
         return layer
     
     def CalculateEntropy(self, node_a, node_b):
@@ -119,8 +125,8 @@ class FindRoute(object):
             route.append(pair_input[min_index])
             accum += result[min_index]
             pair_input = [(pair_input[min_index][1], i) for i in self.G2.neighbors(pair_input[min_index][1])]
-            # return route
         print("Route is", route)
+        return route
     
     def Route(self, Com_result, file1, file2):
         '''Find the best route'''
@@ -133,7 +139,7 @@ class FindRoute(object):
 if __name__ == "__main__":
     temp = FindRoute('/Users/pengfeiwang/Desktop/test/test/')
     files = temp.PairFile()
-    temp.FindChanges(files[0][0], files[0][1])
-    temp.Route('/Users/pengfeiwang/Desktop/IncrementalCDs/data/2004-04.com.txt' ,files[0][0], files[0][1])
-
-
+    temp.FindChanges(*files[0])
+    Com_result = '/Users/pengfeiwang/Desktop/IncrementalCDs/data/2004-04.com.txt'
+    temp.FindSameCom(Com_result, *files[0])
+    temp.Route(Com_result, *files[0])
