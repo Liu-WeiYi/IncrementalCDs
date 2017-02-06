@@ -16,7 +16,7 @@ class FindRoute(object):
     
     def PairFile(self):
         '''Pair the files in the directory from day to day'''
-        files = glob(os.path.join(self.file_dir, '200*'))
+        files = [_ for _ in glob(os.path.join(self.file_dir, '200*')) if _.find('com') <= 0]
         paired_list = list(zip(*[files[_:] for _ in range(2)]))
         return paired_list
     
@@ -132,14 +132,24 @@ class FindRoute(object):
         '''Find the best route'''
         layer = self.FindSameCom(Com_result, file1, file2)
         pair = [[(x, k) for k in y] for x, y in layer.items()]
+        result = []
         for i in pair:
             if i != []:
-                self.CalculateEntropyPath(i)
+                result += self.CalculateEntropyPath(i) 
+                # need the output style
+        G_out = nx.Graph(day='output_nx')
+        G_out_nodes = [j for i in result for j in list(i)]
+        G_out.add_nodes_from(G_out_nodes)
+        G_out.add_edges_from(result)
+        return(G_out)
+
+
 
 if __name__ == "__main__":
-    temp = FindRoute('/Users/pengfeiwang/Desktop/test/test/')
+    os.chdir('/Users/pengfeiwang/Desktop/IncrementalCDs/')
+    temp = FindRoute('./data/')
     files = temp.PairFile()
     temp.FindChanges(*files[0])
-    Com_result = '/Users/pengfeiwang/Desktop/IncrementalCDs/data/2004-04.com.txt'
+    Com_result = './data/2004-04.com.txt'
     temp.FindSameCom(Com_result, *files[0])
-    temp.Route(Com_result, *files[0])
+    result = temp.Route(Com_result, *files[0])
