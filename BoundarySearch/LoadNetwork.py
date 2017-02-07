@@ -125,7 +125,7 @@ class FindRoute(object):
             route.append(pair_input[min_index])
             accum += result[min_index]
             pair_input = [(pair_input[min_index][1], i) for i in self.G2.neighbors(pair_input[min_index][1])]
-        print("Route is", route)
+        #print("Route is", route)
         return route
     
     def Route(self, Com_result, file1, file2):
@@ -146,10 +146,25 @@ class FindRoute(object):
 
 
 if __name__ == "__main__":
-    os.chdir('/Users/pengfeiwang/Desktop/IncrementalCDs/')
+    #os.chdir('/Users/pengfeiwang/Desktop/IncrementalCDs/')
     temp = FindRoute('./data/')
     files = temp.PairFile()
     temp.FindChanges(*files[0])
     Com_result = './data/2004-04.com.txt'
     temp.FindSameCom(Com_result, *files[0])
     result = temp.Route(Com_result, *files[0])
+    #print(result)
+
+def LoadNetworkEntrance(temp,file1, file2, Changed_com_path):
+    """
+    Entrance Func
+    Return Changed Graph
+    """
+    #temp = FindRoute('./data/')
+    #files = temp.PairFile()
+    temp.FindChanges(file1,file2)
+    # Com_result = './data/2004-04.com.txt'
+    Com_result = Changed_com_path
+    temp.FindSameCom(Com_result, file1, file2)
+    return temp.Route(Com_result, file1, file2)
+    

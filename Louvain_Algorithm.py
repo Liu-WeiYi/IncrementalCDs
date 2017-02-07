@@ -14,5 +14,5 @@ def Louvain(filename):
 
 
 # JUST FOR TEST
-filename = "2004-04"
-Louvain(filename)
+#filename = "2004-04"
+#Louvain(filename)
