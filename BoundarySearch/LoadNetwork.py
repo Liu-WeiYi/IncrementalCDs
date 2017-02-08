@@ -10,9 +10,10 @@ from scipy.special import comb
 
 
 class FindRoute(object):
-    def __init__(self, file_dir):
+    def __init__(self, file_dir, mean_threshold = 0.5):
         self.file_dir = file_dir
-        self.threshold = 4
+        self.accum_threshold = 4
+        self.mean_threshold = mean_threshold
     
     def PairFile(self):
         '''Pair the files in the directory from day to day'''
@@ -118,13 +119,15 @@ class FindRoute(object):
         # input [(4, 1), (4, 3)]
         accum = 0
         route = []
-        while accum <= self.threshold:
+        while accum <= self.accum_threshold:
             result = []
             result = [self.CalculateEntropy(*i) for i in pair_input]
             min_index = np.argmin(result)
             route.append(pair_input[min_index])
             accum += result[min_index]
             pair_input = [(pair_input[min_index][1], i) for i in self.G2.neighbors(pair_input[min_index][1])]
+        # num_layers = len(route)
+        # mean_information_gain = accum / num_layers
         #print("Route is", route)
         return route
     
@@ -136,7 +139,6 @@ class FindRoute(object):
         for i in pair:
             if i != []:
                 result += self.CalculateEntropyPath(i) 
-                # need the output style
         G_out = nx.Graph(day='output_nx')
         G_out_nodes = [j for i in result for j in list(i)]
         G_out.add_nodes_from(G_out_nodes)
@@ -144,18 +146,17 @@ class FindRoute(object):
         return(G_out)
 
 
+# if __name__ == "__main__":
+#     #os.chdir('/Users/pengfeiwang/Desktop/IncrementalCDs/')
+#     temp = FindRoute('./data/')
+#     files = temp.PairFile()
+#     temp.FindChanges(*files[0])
+#     Com_result = './data/2004-04.com.txt'
+#     temp.FindSameCom(Com_result, *files[0])
+#     result = temp.Route(Com_result, *files[0])
+#     #print(result)
 
-if __name__ == "__main__":
-    #os.chdir('/Users/pengfeiwang/Desktop/IncrementalCDs/')
-    temp = FindRoute('./data/')
-    files = temp.PairFile()
-    temp.FindChanges(*files[0])
-    Com_result = './data/2004-04.com.txt'
-    temp.FindSameCom(Com_result, *files[0])
-    result = temp.Route(Com_result, *files[0])
-    #print(result)
-
-def LoadNetworkEntrance(temp,file1, file2, Changed_com_path):
+def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
     """
     Entrance Func
     Return Changed Graph

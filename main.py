@@ -39,12 +39,18 @@ if __name__ == "__main__":
         G_out = LN.LoadNetworkEntrance(temp, file1, file2, merged_com) # NEED ATTENTION!! NEED MERGED COMMUNITY RESULTS!!
 
         # output ---> write graph into disk
-        graph_path = "%sChanged_Graph"%data_path
-        with open(graph_path,"w+") as f:
+        changed_graph_path = "%sChanged_Graph"%data_path
+        with open(changed_graph_path,"w+") as f:
             for e in G_out.edges():
                 n1, n2 = e
                 f.write(str(n1)+" "+str(n2)+"\n")
-        
+
+        # find the community in the influenced path
+        Louvain(changed_graph_path)
+
+        # load the result and merge 
+        # however, the communities indicators changed, how to determine result
+        changed_com = changed_graph_path+".com"
 
 
 
