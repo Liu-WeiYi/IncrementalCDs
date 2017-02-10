@@ -1,6 +1,7 @@
 # coding: utf-8
 from BoundarySearch import LoadNetwork as LN
 from Louvain_Algorithm import Louvain
+from LPA_Algorithm import LPA
 
 # LN.LoadNetworkEntrance()
 
@@ -25,7 +26,7 @@ if __name__ == "__main__":
         if i == 0: # for the first time, graph is the file1 (2004-04)
             graph_path = file1
         # find changed graph's communities
-        Louvain(graph_path)
+        LPA(graph_path)
 
         # 2. Merge Changed Community and Original Community
         """
@@ -46,11 +47,20 @@ if __name__ == "__main__":
                 f.write(str(n1)+" "+str(n2)+"\n")
 
         # find the community in the influenced path
-        Louvain(changed_graph_path)
+        LPA(changed_graph_path)
+        changed_graph_path_com = changed_graph_path+".com"
 
         # load the result and merge 
-        # however, the communities indicators changed, how to determine result
         changed_com = changed_graph_path+".com"
+        d = LN.MergeNewCom(temp, merged_com, file2, changed_graph_path_com)
+        print(d)
+
+        # save into file
+        new_com = "%sNewoutput"%data_path
+        with open(new_com, "w+") as output:
+            for com in d.values():
+                output.write(com+"\n")
+        break
 
 
 
