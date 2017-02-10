@@ -10,9 +10,10 @@ from scipy.special import comb
 
 
 class FindRoute(object):
-    def __init__(self, file_dir):
+    def __init__(self, file_dir, mean_threshold = 0.5):
         self.file_dir = file_dir
-        self.threshold = 4
+        self.accum_threshold = 4
+        self.mean_threshold = mean_threshold
     
     def PairFile(self):
         '''Pair the files in the directory from day to day'''
@@ -40,6 +41,7 @@ class FindRoute(object):
         # output: dictionary, key is nodes, value is community
         com_content = open(com_file, encoding='utf-8').readlines()
         com_content = [list(map(int, _.split())) for _ in com_content]
+        com_content = [_ for _ in com_content if _ != []]
         com_nums = range(1, len(com_content) + 1)
         com_map = {i: com_num for com_num, com in zip(com_nums, com_content) for i in com}
         return com_map
@@ -118,14 +120,16 @@ class FindRoute(object):
         # input [(4, 1), (4, 3)]
         accum = 0
         route = []
-        while accum <= self.threshold:
+        while accum <= self.accum_threshold:
             result = []
             result = [self.CalculateEntropy(*i) for i in pair_input]
             min_index = np.argmin(result)
             route.append(pair_input[min_index])
             accum += result[min_index]
             pair_input = [(pair_input[min_index][1], i) for i in self.G2.neighbors(pair_input[min_index][1])]
-        #print("Route is", route)
+        # num_layers = len(route)
+        # mean_information_gain = accum / num_layers
+        # print("Route is", route)
         return route
     
     def Route(self, Com_result, file1, file2):
@@ -136,35 +140,48 @@ class FindRoute(object):
         for i in pair:
             if i != []:
                 result += self.CalculateEntropyPath(i) 
-                # need the output style
         G_out = nx.Graph(day='output_nx')
-        G_out_nodes = [j for i in result for j in list(i)]
+        G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
         G_out.add_nodes_from(G_out_nodes)
         G_out.add_edges_from(result)
         return(G_out)
-
 
 
 if __name__ == "__main__":
     #os.chdir('/Users/pengfeiwang/Desktop/IncrementalCDs/')
     temp = FindRoute('./data/')
     files = temp.PairFile()
-    temp.FindChanges(*files[0])
-    Com_result = './data/2004-04.com.txt'
-    temp.FindSameCom(Com_result, *files[0])
+    # temp.FindChanges(*files[0])
+    Com_result = './data/2004-04.com'
+    # temp.FindSameCom(Com_result, *files[0])
     result = temp.Route(Com_result, *files[0])
     #print(result)
 
-def LoadNetworkEntrance(temp,file1, file2, Changed_com_path):
+def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
     """
     Entrance Func
     Return Changed Graph
     """
     #temp = FindRoute('./data/')
     #files = temp.PairFile()
-    temp.FindChanges(file1,file2)
     # Com_result = './data/2004-04.com.txt'
     Com_result = Changed_com_path
-    temp.FindSameCom(Com_result, file1, file2)
     return temp.Route(Com_result, file1, file2)
-    
+  
+
+def MergeNewCom(temp, old_com, file2, changed_com):
+    old_com = temp.LoadCommunityFile(old_com)
+    file2 = temp.LoadNetworkFile(file2)
+    new_del = {i: j for i, j in old_com.items() if i in file2.nodes()}
+    old_com_max = max(new_del.values())
+    changed_com = temp.LoadCommunityFile(changed_com)
+    changed_com_update = {i: j + old_com_max for i, j in changed_com.items()}
+    new_del.update(changed_com_update)
+    d = {}
+    for key, value in new_del.items():
+        d.setdefault(value, []).append(key)
+    d = {i: ' '.join(map(str, j)) for i,j in d.items()}
+    return(d)
+
+
+
