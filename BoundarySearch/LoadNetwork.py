@@ -17,7 +17,7 @@ class FindRoute(object):
     
     def PairFile(self):
         '''Pair the files in the directory from day to day'''
-        files = [_ for _ in glob(os.path.join(self.file_dir, '200*')) if _.find('com') <= 0]
+        files = [_ for _ in glob(os.path.join(self.file_dir, '200*')) if _.find('com') <= 0 and _.find('changed') <= 0]
         paired_list = list(zip(*[files[_:] for _ in range(2)]))
         return paired_list
     
@@ -99,6 +99,7 @@ class FindRoute(object):
         all_changes = self.FindChanges(file1, file2)
         layer = {}
         layer.update({i: j for i, j in all_changes.items() if i in self.add_nodes})
+        # to be fixed
         layer.update({i: [k for k in j if com_map[i] == com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
         return layer
     
@@ -164,7 +165,7 @@ def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
     """
     #temp = FindRoute('./data/')
     #files = temp.PairFile()
-    # Com_result = './data/2004-04.com.txt'
+    # Com_result = './data/2004-04.com'
     Com_result = Changed_com_path
     return temp.Route(Com_result, file1, file2)
   
