@@ -12,7 +12,7 @@ from scipy.special import comb
 class FindRoute(object):
     def __init__(self, file_dir, mean_threshold = 0.5):
         self.file_dir = file_dir
-        self.accum_threshold = 4
+        self.accum_threshold = 2
         self.mean_threshold = mean_threshold
     
     def PairFile(self):
@@ -61,7 +61,7 @@ class FindRoute(object):
         all_changes = {}
         # added and deleted nodes
         # any neighbors of newly-added nodes should be influenced
-        all_changes.update({_: [__ for __ in self.G2.neighbors(_) if __ in G1_node] for _ in self.add_nodes})
+        all_changes.update({_: [__ for __ in self.G2.neighbors(_)] for _ in self.add_nodes})
         # any neighbors of deleted nodes should be influenced if the neighbors still in G2
         # we remove the del nodes and starts with its neighbors
         del_ndoes_influence = {_: self.G1.neighbors(_) for _ in del_nodes}
@@ -99,7 +99,6 @@ class FindRoute(object):
         all_changes = self.FindChanges(file1, file2)
         layer = {}
         layer.update({i: j for i, j in all_changes.items() if i in self.add_nodes})
-        # to be fixed
         layer.update({i: [k for k in j if com_map[i] == com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
         return layer
     
@@ -148,24 +147,21 @@ class FindRoute(object):
         return(G_out)
 
 
-if __name__ == "__main__":
-    #os.chdir('/Users/pengfeiwang/Desktop/IncrementalCDs/')
-    temp = FindRoute('./data/')
-    files = temp.PairFile()
-    # temp.FindChanges(*files[0])
-    Com_result = './data/2004-04.com'
-    # temp.FindSameCom(Com_result, *files[0])
-    result = temp.Route(Com_result, *files[0])
-    #print(result)
+# if __name__ == "__main__":
+#     os.chdir('/Users/pengfeiwang/Desktop/inc/IncrementalCDs/')
+#     temp = FindRoute('./data/')
+#     files = temp.PairFile()
+#     # temp.FindChanges(*files[0])
+#     Com_result = './data/2004-06.com'
+#     # temp.FindSameCom(Com_result, *files[0])
+#     result = temp.Route(Com_result, *files[2])
+
 
 def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
     """
     Entrance Func
     Return Changed Graph
     """
-    #temp = FindRoute('./data/')
-    #files = temp.PairFile()
-    # Com_result = './data/2004-04.com'
     Com_result = Changed_com_path
     return temp.Route(Com_result, file1, file2)
   
