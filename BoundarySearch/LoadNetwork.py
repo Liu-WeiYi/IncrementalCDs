@@ -167,8 +167,10 @@ def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
   
 
 def MergeNewCom(temp, old_com, file2, changed_com):
+    '''Merge the old and changed one, return the new community'''
     old_com = temp.LoadCommunityFile(old_com)
     file2 = temp.LoadNetworkFile(file2)
+    # keep unchanged one and assign changed nodes new communities
     new_del = {i: j for i, j in old_com.items() if i in file2.nodes()}
     old_com_max = max(new_del.values())
     changed_com = temp.LoadCommunityFile(changed_com)
