@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.5
 
-import os, system
+import os
 from math import log
 from glob import glob
 import networkx as nx
@@ -10,7 +10,7 @@ from scipy.special import comb
 
 
 class FindRoute(object):
-    def __init__(self, file_dir, mean_threshold = 0.6):
+    def __init__(self, file_dir, mean_threshold = 0.5):
         self.file_dir = file_dir
         self.accum_threshold = 2
         # if mean_threshold too small, may result in no community in changes nodes
@@ -121,15 +121,17 @@ class FindRoute(object):
         # input [(4, 1), (4, 3)]
         accum = 0
         route = []
+        nround = 1
         while accum <= self.accum_threshold:
             result = []
             result = [self.CalculateEntropy(*i) for i in pair_input]
             min_index = np.argmin(result)
             max_index = np.argmax(result)
-            if result[min_index] < self.mean_threshold:
+            if result[min_index] < self.mean_threshold or nround < 2:
                 route.append(pair_input[max_index])
                 accum += result[max_index]
                 pair_input = [(pair_input[max_index][1], i) for i in self.G2.neighbors(pair_input[max_index][1])]
+                nround += 1
             else:
                 break
         # num_layers = len(route)
@@ -145,14 +147,10 @@ class FindRoute(object):
         for i in pair:
             if i != []:
                 result += self.CalculateEntropyPath(i) 
-        if result:
-            G_out = nx.Graph(day='output_nx')
-            G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
-            G_out.add_nodes_from(G_out_nodes)
-            G_out.add_edges_from(result)
-        else:
-            print("No communities detected")
-            system.exit()
+        G_out = nx.Graph(day='output_nx')
+        G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
+        G_out.add_nodes_from(G_out_nodes)
+        G_out.add_edges_from(result)
         return(G_out)
 
 
