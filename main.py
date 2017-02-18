@@ -2,6 +2,7 @@
 from BoundarySearch import LoadNetwork as LN
 from Louvain_Algorithm import Louvain
 from LPA_Algorithm import LPA
+import time
 
 # LN.LoadNetworkEntrance()
 
@@ -12,6 +13,7 @@ if __name__ == "__main__":
     # init
     temp = LN.FindRoute(data_path)
     files = temp.PairFile()
+    start = time.time()
 
     # find com
     for i in range(len(files)):
@@ -59,6 +61,9 @@ if __name__ == "__main__":
         with open(new_com, "w+") as output:
             for com in d.values():
                 output.write(com + "\n")
+
+        end = (time.time() - start) / (i + 1)
+        print("Time per loop:", end)
 
 
 

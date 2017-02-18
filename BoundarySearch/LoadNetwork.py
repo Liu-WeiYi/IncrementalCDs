@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.5
 
-import os
+import os, system
 from math import log
 from glob import glob
 import networkx as nx
@@ -10,9 +10,10 @@ from scipy.special import comb
 
 
 class FindRoute(object):
-    def __init__(self, file_dir, mean_threshold = 0.5):
+    def __init__(self, file_dir, mean_threshold = 0.6):
         self.file_dir = file_dir
         self.accum_threshold = 2
+        # if mean_threshold too small, may result in no community in changes nodes
         self.mean_threshold = mean_threshold
     
     def PairFile(self):
@@ -124,9 +125,13 @@ class FindRoute(object):
             result = []
             result = [self.CalculateEntropy(*i) for i in pair_input]
             min_index = np.argmin(result)
-            route.append(pair_input[min_index])
-            accum += result[min_index]
-            pair_input = [(pair_input[min_index][1], i) for i in self.G2.neighbors(pair_input[min_index][1])]
+            max_index = np.argmax(result)
+            if result[min_index] < self.mean_threshold:
+                route.append(pair_input[max_index])
+                accum += result[max_index]
+                pair_input = [(pair_input[max_index][1], i) for i in self.G2.neighbors(pair_input[max_index][1])]
+            else:
+                break
         # num_layers = len(route)
         # mean_information_gain = accum / num_layers
         # print("Route is", route)
@@ -140,10 +145,14 @@ class FindRoute(object):
         for i in pair:
             if i != []:
                 result += self.CalculateEntropyPath(i) 
-        G_out = nx.Graph(day='output_nx')
-        G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
-        G_out.add_nodes_from(G_out_nodes)
-        G_out.add_edges_from(result)
+        if result:
+            G_out = nx.Graph(day='output_nx')
+            G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
+            G_out.add_nodes_from(G_out_nodes)
+            G_out.add_edges_from(result)
+        else:
+            print("No communities detected")
+            system.exit()
         return(G_out)
 
 
@@ -176,6 +185,13 @@ def MergeNewCom(temp, old_com, file2, changed_com):
     changed_com = temp.LoadCommunityFile(changed_com)
     changed_com_update = {i: j + old_com_max for i, j in changed_com.items()}
     new_del.update(changed_com_update)
+
+    left_nodes = list(set(file2.nodes()) - set(new_del.keys()))
+    old_com_max = max(new_del.values())
+    num = len(left_nodes)
+    y = range(old_com_max + 1, old_com_max + num + 1)
+    new_del.update({i: j for i, j in zip(left_nodes, y)})
+
     d = {}
     for key, value in new_del.items():
         d.setdefault(value, []).append(key)
