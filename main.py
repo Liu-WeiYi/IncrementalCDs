@@ -40,7 +40,7 @@ if __name__ == "__main__":
         # find Changed Graph
         start = time.time()
         G_out = LN.LoadNetworkEntrance(temp, file1, file2, merged_com) # NEED ATTENTION!! NEED MERGED COMMUNITY RESULTS!!
-        # t.append(time.time() - start)
+        t.append(time.time() - start)
 
         # output ---> write graph into disk
         changed_graph_path = file2 + "_changed"
@@ -53,6 +53,7 @@ if __name__ == "__main__":
         # start = time.time()
         LPA(changed_graph_path)
         # t.append(time.time() - start)
+        
         changed_graph_path_com = changed_graph_path+".com"
 
         # load the result and merge 
@@ -64,7 +65,6 @@ if __name__ == "__main__":
         with open(new_com, "w+") as output:
             for com in d.values():
                 output.write(com + "\n")
-        t.append(time.time() - start)
 
     [print(i) for i in t]
 

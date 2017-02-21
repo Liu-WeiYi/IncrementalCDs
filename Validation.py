@@ -9,10 +9,11 @@
 
 import pickle
 import networkx as nx 
-import time
+import time, pickle
 import sys
 import random
 import copy
+from LPA_Algorithm import LPA
 
 from BoundarySearch import LoadNetwork as LN
 
@@ -227,15 +228,38 @@ def test_partial_change(val):
     """
     Purpose: test Partial Change func
     """
-    base_graph = nx.random_graphs.barabasi_albert_graph(300,2)
-    for i in range(0,101,1):
+    base_graph = nx.random_graphs.barabasi_albert_graph(1000,2)
+    # ---------------------------------------------------------↧
+    record = {}
+    temp = LN.FindRoute('./')
+    base_graph_path = './base_dta'
+    with open(base_graph_path, "w+") as f:
+        for e in base_graph.edges():
+            n1, n2 = e
+            f.write(str(n1) + " " + str(n2) + "\n")
+    LPA(base_graph_path)
+    Changed_com_path = base_graph_path+".com"
+    # ---------------------------------------------------------
+    for i in range(0,100,1):
         change_rate = i/100
         print("change_rate: ",change_rate,end = '\t')
         change_graph = val.PartialChange(base_graph, change_rate)
-        n_rate, e_rate = val.CompareTwoGraph(base_graph,change_graph)
-        if DebugFlag is True:
-            print("\t","NodeRate %.3f"%n_rate,"  ","EdgeRate %.3f"%e_rate)
-
+        # ---------------------------------------------------------↧
+        change_graph_path = './change_dta'
+        with open(change_graph_path, "w+") as g:
+            for e in change_graph.edges():
+                n1, n2 = e
+                g.write(str(n1) + " " + str(n2) + "\n")
+        start = time.time()
+        G_out = LN.LoadNetworkEntrance(temp, base_graph_path, change_graph_path, Changed_com_path)
+        t = time.time() - start
+        print(t)
+        record[change_rate] = t
+        # ---------------------------------------------------------
+        # n_rate, e_rate = val.CompareTwoGraph(base_graph,change_graph)
+        # if DebugFlag is True:
+            # print("\t","NodeRate %.3f"%n_rate,"  ","EdgeRate %.3f"%e_rate)
+    pickle.dump(record, open('./dict.pkl', 'wb'))
 
 if __name__ == '__main__':
 
@@ -248,7 +272,7 @@ if __name__ == '__main__':
     
     # test func
     # 1. test graph change func
-    test_graph_change(files,val)
+    # test_graph_change(files,val)
 
     # 2. test partial change
     test_partial_change(val)

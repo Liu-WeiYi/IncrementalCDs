@@ -139,7 +139,7 @@ class FindRoute(object):
                     new_neighbors = [_ for _ in self.G2.neighbors(new_start_node) if _ not in self.add_nodes and self.com_map[_] == new_node_com]
                 elif new_start_node in self.add_nodes:
                     new_neighbors = [_ for _ in self.G2.neighbors(new_start_node)]
-                    
+
                 pair_input = [(pair_input[max_index][1], _) for _ in new_neighbors]
                 nround += 1
             else:

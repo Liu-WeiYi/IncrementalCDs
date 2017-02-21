@@ -5,7 +5,7 @@ Output: a new graph
 Initialise an empty list route
 
 foreach each node in {Vc} do
-    next_target <= FindSameCom(Com_result, file1, file2)
+    next_targets <= FindSameCom(Com_result, file1, file2)
 
     FindSameCom help find all the neighbors of node that in the same 
     commnities. If node is a newly-add node, we keep all the neighbors
@@ -17,7 +17,7 @@ foreach each node in {Vc} do
 
     while accum <= accum_threshold do
 
-        foreach each n in neighbors do
+        foreach each n in next_targets do
             Find:
                 EntropyList <= CalculateEntropy(node, n)
                 n* <= find the neighbor-node that max(EntropyList)
@@ -26,11 +26,11 @@ foreach each node in {Vc} do
         if nround < 2 or minEntropy <= mean_threshold do
             update nround += 1
             update accum += max_entropy
-            update route <= edges between node and all its neighbors
+            update route <= edges between node and all its next_targets
             update node to n*
-            update neighbors:
+            update next_targets:
                 if n* is not unique in file2:
-                    only the neighbors that have same commnities
+                    only the neighbors that have same commnities of n*
                 elif n* is a unique in file2:
                     all neighbors of n*
 
