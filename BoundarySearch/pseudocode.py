@@ -12,13 +12,28 @@ foreach each node in {Vc} do
     nround = 1
 
     while accum <= accum_threshold do
+    
         foreach each n in node.neighbors do
             Find:
-                n* <= max{CalculateEntropy(node, n)}
-                n** <= min{CalculateEntropy(node, n)}
-        if nround < 2 or n** <= mean_threshold do
+                EntropyList <= CalculateEntropy(node, n)
+                n* <= find the neighbor-node that max(EntropyList)
+                minEntropy = min(EntropyList)
+
+        if nround < 2 or minEntropy <= mean_threshold do
             update nround += 1
-            update accum += CalculateEntropy(node, n*)
+            update accum += max_entropy
             update route <= tuple(node, n*)
             update node to n*
-    return route
+        else:
+            END the loop
+    END
+
+Initialise a new networkx nx;
+nx.nodes() <= all nodes that appear in route
+nx.edges() <= egdes in route
+
+return nx
+nx is the new network 
+
+END
+
