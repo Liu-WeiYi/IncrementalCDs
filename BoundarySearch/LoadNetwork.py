@@ -96,11 +96,11 @@ class FindRoute(object):
         '''Check whether the changes'''
         # input: community resule file, paired file
         # output {1: [2, 3], 2: [3, 4]}
-        com_map = self.LoadCommunityFile(Com_result)
+        self.com_map = self.LoadCommunityFile(Com_result)
         all_changes = self.FindChanges(file1, file2)
         layer = {}
         layer.update({i: j for i, j in all_changes.items() if i in self.add_nodes})
-        layer.update({i: [k for k in j if com_map[i] == com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
+        layer.update({i: [k for k in j if self.com_map[i] == self.com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
         return layer
     
     def CalculateEntropy(self, node_a, node_b):
@@ -130,9 +130,17 @@ class FindRoute(object):
             min_index = np.argmin(result)
             max_index = np.argmax(result)
             if result[min_index] < self.mean_threshold or nround < 2:
-                route.append(pair_input[max_index])
                 accum += result[max_index]
-                pair_input = [(pair_input[max_index][1], i) for i in self.G2.neighbors(pair_input[max_index][1])]
+                route = route + pair_input
+
+                new_start_node = pair_input[max_index][1]
+                if new_start_node not in self.add_nodes:
+                    new_node_com = self.com_map[new_start_node]
+                    new_neighbors = [_ for _ in self.G2.neighbors(new_start_node) if _ not in self.add_nodes and self.com_map[_] == new_node_com]
+                elif new_start_node in self.add_nodes:
+                    new_neighbors = [_ for _ in self.G2.neighbors(new_start_node)]
+                    
+                pair_input = [(pair_input[max_index][1], _) for _ in new_neighbors]
                 nround += 1
             else:
                 break
@@ -157,7 +165,6 @@ class FindRoute(object):
 
 
 # if __name__ == "__main__":
-#     os.chdir('/Users/pengfeiwang/Desktop/inc/IncrementalCDs/')
 #     temp = FindRoute('./data/')
 #     files = temp.PairFile()
 #     # temp.FindChanges(*files[0])
