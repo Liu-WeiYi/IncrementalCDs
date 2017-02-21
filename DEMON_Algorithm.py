@@ -1,8 +1,8 @@
 # coding: utf-8
 
-import sys, os
+import sys, os, time
 
-def LPA(filename,overlap_rate = 0.1):
+def DEMON(filename,overlap_rate = 0.1):
     # 功能:
     #   LPA 社团发现算法的Wrapper
     # 输入: 
@@ -14,5 +14,17 @@ def LPA(filename,overlap_rate = 0.1):
 
 
 # JUST FOR TEST
-filename = "2004-04"
-LPA(filename)
+filename = "./data/CollegeMsg/2004-10"
+DEMON(filename)
+
+# if __name__ == "__main__":
+#     t = []
+#     for i in range(4,11):
+#         if i ==10:
+#             filename = "./data/CollegeMsg/2004-10"
+#         else:
+#             filename = "./data/CollegeMsg/2004-0" + str(i)
+#         start = time.time()
+#         DEMON(filename)
+#         t.append(time.time() - start)
+#     print(t)
