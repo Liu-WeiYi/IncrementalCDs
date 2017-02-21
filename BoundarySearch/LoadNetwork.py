@@ -110,8 +110,10 @@ class FindRoute(object):
         degree_a = len(self.G2.neighbors(node_a))
         degree_b = len(self.G2.neighbors(node_b))
         degree_tot = len(self.G2_edge)
-        denom = comb(degree_tot, degree_a)
-        num = comb(degree_tot - degree_b, degree_a) 
+        # denom = comb(degree_tot, degree_a)
+        # num = comb(degree_tot - degree_b, degree_a) 
+        denom = comb(degree_tot, degree_b)
+        num = comb(degree_tot - degree_a, degree_b) 
         p_ab = 1 - num / denom
         influence = -log(p_ab)  
         return influence

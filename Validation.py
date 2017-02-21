@@ -54,9 +54,9 @@ class Validation:
                     n1, n2 = line.strip().split(" ")
                 except:
                     continue
-                graph.add_node(n1)
-                graph.add_node(n2)
-                graph.add_edge(n1,n2)
+                graph.add_node(int(n1))
+                graph.add_node(int(n2))
+                graph.add_edge(int(n1),int(n2))
         return graph
 
     #----------------------------------------------------------------------
@@ -239,7 +239,7 @@ def test_partial_change(val):
 
 if __name__ == '__main__':
 
-    data_path = "./data/"
+    data_path = "./data/CollegeMsg/"
 
     # init
     temp = LN.FindRoute(data_path)
