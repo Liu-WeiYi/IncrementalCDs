@@ -1,6 +1,8 @@
 # coding: utf-8
 
 import sys, os
+import re, time
+from glob import glob
 
 def LPA(filename):
     # 功能:
@@ -16,3 +18,14 @@ def LPA(filename):
 # JUST FOR TEST
 # filename = "2004-04"
 # LPA(filename)
+
+# file_dir = "./data/Sx-superuser/"
+# if __name__ == "__main__":
+#     t = []
+#     files = [_ for _ in glob(os.path.join(file_dir, '*')) if re.search('^\d{4}-\d{2}$', _.split('/')[-1])]
+#     for i in files:
+#         start = time.time()
+#         LPA(i)
+#         t.append(time.time() - start)
+#     for _ in t:
+#         print(_)

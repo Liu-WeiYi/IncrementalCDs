@@ -1,6 +1,7 @@
 # coding: utf-8
 
-import sys, os, time
+import sys, os, time, re
+from glob import glob
 
 def DEMON(filename,overlap_rate = 0.1):
     # 功能:
@@ -14,18 +15,16 @@ def DEMON(filename,overlap_rate = 0.1):
 
 
 # JUST FOR TEST
-filename = "./data/CollegeMsg/2004-10"
-DEMON(filename)
+# filename = "./data/CollegeMsg/2004-10"
+# DEMON(filename)
 
+# file_dir = "./data/Sx-superuser/"
 # if __name__ == "__main__":
 #     t = []
-#     for i in range(4,11):
-#         if i ==10:
-#             filename = "./data/CollegeMsg/2004-10"
-#         else:
-#             filename = "./data/CollegeMsg/2004-0" + str(i)
+#     files = [_ for _ in glob(os.path.join(file_dir, '*')) if re.search('^\d{4}-\d{2}$', _.split('/')[-1])]
+#     for i in files:
 #         start = time.time()
-#         DEMON(filename)
+#         DEMON(i)
 #         t.append(time.time() - start)
 #     for _ in t:
 #         print(_)

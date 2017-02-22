@@ -74,7 +74,6 @@ class FindRoute(object):
         del_nodes_still_nodes = [k for i, j in del_ndoes_influence.items() for k in j if k in G2_node]
         remove_new_nodes = {i: self.G2.neighbors(i) for i in del_nodes_still_nodes if i in G2_node}
         all_changes.update({i: [k for k in j if k in G1_node] for i, j in remove_new_nodes.items()})
-        # all_changes.update({i: self.G2.neighbors(i) for i in del_nodes_still_nodes if i in G2_node})
         if add_edges:
             add_nodes_links = [(_, __) for _ in self.add_nodes for __ in self.G2.neighbors(_)]
             add_edges = list(set(add_edges) - set(add_nodes_links) - set(tuple(reversed(i)) for i in add_nodes_links))
@@ -148,9 +147,6 @@ class FindRoute(object):
                 nround += 1
             else:
                 break
-        # num_layers = len(route)
-        # mean_information_gain = accum / num_layers
-        # print("Route is", route)
         return route
     
     def Route(self, com_map, G1, G2):

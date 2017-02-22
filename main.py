@@ -6,7 +6,7 @@ from DEMON_Algorithm import DEMON
 import time
 
 
-data_path = "./data/CollegeMsg/"
+data_path = "./data/Sx-superuser/"
 
 if __name__ == "__main__":
     # init
@@ -27,9 +27,9 @@ if __name__ == "__main__":
 
         if i == 0: # for the first time, graph is the file1 (2004-04)
             # find changed graph's communities
-            LPA(graph_path)
+            # LPA(graph_path)
             # DEMON(graph_path)
-            # Louvain(graph_path)
+            Louvain(graph_path)
 
         # 2. Merge Changed Community and Original Community
         """
@@ -52,9 +52,11 @@ if __name__ == "__main__":
 
         # find the community in the influenced path
         method_start = time.time()
-        LPA(changed_graph_path)
+        
+        # LPA(changed_graph_path)
         # DEMON(changed_graph_path)
-        # Louvain(changed_graph_path)
+        Louvain(changed_graph_path)
+
         Method_time_l.append(time.time() - method_start)
         
         changed_graph_path_com = changed_graph_path+".com"

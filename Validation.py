@@ -83,6 +83,8 @@ class Validation:
         changed_edges = set(edges2).union(set(edges1))-set(edges1).intersection(set(edges2))
         Edge_Change_Rate = len(changed_edges)/len(edges1)
 
+        print(len(changed_edges))
+
         return Node_Change_Rate, Edge_Change_Rate
 
     #----------------------------------------------------------------------
@@ -230,7 +232,8 @@ def test_partial_change(val):
     Purpose: test Partial Change func
     """
     base_graph = nx.random_graphs.barabasi_albert_graph(10000,2)
-    # ---------------------------------------------------------↧
+
+    # save save localfile
     record = {}
     temp = LN.FindRoute('./')
     base_graph_path = './base_dta'
@@ -240,33 +243,36 @@ def test_partial_change(val):
             f.write(str(n1) + " " + str(n2) + "\n")
     LPA(base_graph_path)
     Changed_com_path = base_graph_path+".com"
-    # ---------------------------------------------------------
+
     for i in range(0,101,1):
         change_rate = i/1000
         print("change_rate: ",change_rate,end = '\t')
         PCstart = time.time()
         change_graph = val.PartialChange(base_graph, change_rate)
         print("\nPC time: ", time.time() - PCstart)
-        # ---------------------------------------------------------↧
+
+        # ---------------------------------------------------------
+        # calculate all kinds of time
         IOstart = time.time()
         change_graph_path = './change_dta'
         with open(change_graph_path, "w+") as g:
             for e in change_graph.edges():
                 n1, n2 = e
                 g.write(str(n1) + " " + str(n2) + "\n")
-        print("IO time:", time.time() - IOstart)
+        # print("IO time:", time.time() - IOstart)
         G_out,BStime = LN.LoadNetworkEntrance(temp, base_graph_path, change_graph_path, Changed_com_path)
-        print("BS time:", BStime)
+        # print("BS time:", BStime)
         record[change_rate] = BStime
         # ---------------------------------------------------------
+
         n_rate, e_rate = val.CompareTwoGraph(base_graph,change_graph)
-        # if DebugFlag is True:
-        #     print("\t","NodeRate %.3f"%n_rate,"  ","EdgeRate %.3f"%e_rate)
+        if DebugFlag is True:
+            print("\t","NodeRate %.3f"%n_rate,"  ","EdgeRate %.3f"%e_rate)
     pickle.dump(record, open('./dict.pkl', 'wb'))
 
 if __name__ == '__main__':
 
-    data_path = "./data/CollegeMsg/"
+    data_path = "./data/Sx-superuser/"
 
     # init
     temp = LN.FindRoute(data_path)
@@ -275,7 +281,7 @@ if __name__ == '__main__':
     
     # test func
     # 1. test graph change func
-    # test_graph_change(files,val)
+    test_graph_change(files,val)
 
     # 2. test partial change
     test_partial_change(val)
