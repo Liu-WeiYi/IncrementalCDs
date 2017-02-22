@@ -115,8 +115,6 @@ class FindRoute(object):
         degree_a = len(self.G2.neighbors(node_a))
         degree_b = len(self.G2.neighbors(node_b))
         degree_tot = len(self.G2_edge)
-        # denom = comb(degree_tot, degree_a)
-        # num = comb(degree_tot - degree_b, degree_a) 
         denom = comb(degree_tot, degree_b)
         num = comb(degree_tot - degree_a, degree_b) 
         p_ab = 1 - num / denom
@@ -130,6 +128,8 @@ class FindRoute(object):
         route = []
         nround = 1
         while accum <= self.accum_threshold:
+            if pair_input == []:
+                return route
             result = []
             result = [self.CalculateEntropy(*i) for i in pair_input]
             min_index = np.argmin(result)
@@ -144,8 +144,7 @@ class FindRoute(object):
                     new_neighbors = [_ for _ in self.G2.neighbors(new_start_node) if _ not in self.add_nodes and self.com_map[_] == new_node_com]
                 elif new_start_node in self.add_nodes:
                     new_neighbors = [_ for _ in self.G2.neighbors(new_start_node)]
-
-                pair_input = [(pair_input[max_index][1], _) for _ in new_neighbors]
+                pair_input = [(new_start_node, _) for _ in new_neighbors]
                 nround += 1
             else:
                 break
@@ -187,6 +186,7 @@ def MergeNewCom(temp, old_com, file2, changed_com):
     '''Merge the old and changed one, return the new community'''
     old_com = temp.LoadCommunityFile(old_com)
     file2 = temp.LoadNetworkFile(file2)
+
     # keep unchanged one and assign changed nodes new communities
     new_del = {i: j for i, j in old_com.items() if i in file2.nodes()}
     old_com_max = max(new_del.values())
