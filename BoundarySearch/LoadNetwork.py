@@ -1,6 +1,8 @@
 #!/usr/bin/env python3.5
 
-import os, time
+import os
+import re
+import time
 from math import log
 from glob import glob
 import networkx as nx
@@ -18,7 +20,7 @@ class FindRoute(object):
     
     def PairFile(self):
         '''Pair the files in the directory from day to day'''
-        files = [_ for _ in glob(os.path.join(self.file_dir, '200*')) if _.find('com') <= 0 and _.find('changed') <= 0]
+        files = [_ for _ in glob(os.path.join(self.file_dir, '*')) if re.search('^\d{4}-\d{2}$', _.split('/')[-1])]
         paired_list = list(zip(*[files[_:] for _ in range(2)]))
         return paired_list
     
