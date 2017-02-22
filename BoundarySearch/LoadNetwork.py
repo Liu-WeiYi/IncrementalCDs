@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.5
 
-import os
+import os, time
 from math import log
 from glob import glob
 import networkx as nx
@@ -47,10 +47,13 @@ class FindRoute(object):
         com_map = {i: com_num for com_num, com in zip(com_nums, com_content) for i in com}
         return com_map
     
-    def FindChanges(self, file1, file2):
+    def FindChanges(self, G1, G2):
         '''Find all the changes btn two networks'''
-        self.G1 = self.LoadNetworkFile(file1)
-        self.G2 = self.LoadNetworkFile(file2)
+        # Input: two networks
+        #        EXAMPLE: G1 = LoadNetworkFile(file1)
+        #                 G2 = LoadNetworkFile(file2)
+        self.G1 = G1
+        self.G2 = G2
         G1_node = set(self.G1.nodes())
         G2_node = set(self.G2.nodes())
         G1_edge = set(self.G1.edges())
@@ -92,12 +95,12 @@ class FindRoute(object):
         all_changes = {i:j for i,j in all_changes.items() if j != []}
         return all_changes
     
-    def FindSameCom(self, Com_result, file1, file2):
+    def FindSameCom(self, com_map, G1, G2):
         '''Check whether the changes'''
-        # input: community resule file, paired file
+        # input: community map(the output of function LoadCommunityFile), paired networks
         # output {1: [2, 3], 2: [3, 4]}
-        self.com_map = self.LoadCommunityFile(Com_result)
-        all_changes = self.FindChanges(file1, file2)
+        self.com_map = com_map
+        all_changes = self.FindChanges(G1, G2)
         layer = {}
         layer.update({i: j for i, j in all_changes.items() if i in self.add_nodes})
         layer.update({i: [k for k in j if self.com_map[i] == self.com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
@@ -149,9 +152,9 @@ class FindRoute(object):
         # print("Route is", route)
         return route
     
-    def Route(self, Com_result, file1, file2):
+    def Route(self, com_map, G1, G2):
         '''Find the best route'''
-        layer = self.FindSameCom(Com_result, file1, file2)
+        layer = self.FindSameCom(com_map, G1, G2)
         pair = [[(x, k) for k in y] for x, y in layer.items()]
         result = []
         for i in pair:
@@ -161,16 +164,7 @@ class FindRoute(object):
         G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
         G_out.add_nodes_from(G_out_nodes)
         G_out.add_edges_from(result)
-        return(G_out)
-
-
-# if __name__ == "__main__":
-#     temp = FindRoute('./data/')
-#     files = temp.PairFile()
-#     # temp.FindChanges(*files[0])
-#     Com_result = './data/2004-06.com'
-#     # temp.FindSameCom(Com_result, *files[0])
-#     result = temp.Route(Com_result, *files[2])
+        return G_out
 
 
 def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
@@ -178,8 +172,13 @@ def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
     Entrance Func
     Return Changed Graph
     """
-    Com_result = Changed_com_path
-    return temp.Route(Com_result, file1, file2)
+    com_map = temp.LoadCommunityFile(Changed_com_path)
+    G1 = temp.LoadNetworkFile(file1)
+    G2 = temp.LoadNetworkFile(file2)
+    start = time.time()
+    output = temp.Route(com_map, G1, G2)
+    t = time.time() - start
+    return output, t
   
 
 def MergeNewCom(temp, old_com, file2, changed_com):

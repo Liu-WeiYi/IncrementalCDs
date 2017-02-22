@@ -27,4 +27,5 @@ DEMON(filename)
 #         start = time.time()
 #         DEMON(filename)
 #         t.append(time.time() - start)
-#     print(t)
+#     for _ in t:
+#         print(_)

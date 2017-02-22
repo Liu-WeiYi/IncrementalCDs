@@ -96,7 +96,7 @@ class Validation:
             change_rate --- how many partial part in the graph we need change
         Output: changed_graph
         """
-        if change_rate >= 1:
+        if change_rate > 1:
             print("change rate is greater than 1!")
             sys.exit()
 
@@ -121,6 +121,7 @@ class Validation:
             del connection --- flag = 3
             """
             change_activity_flag = random.randint(1,3)
+            # change_activity_flag = 1
             #if DebugFlag is True:
                 #print(change_activity_flag, end = " ")
             # 2. change node behavior based on the specific flag
@@ -228,7 +229,7 @@ def test_partial_change(val):
     """
     Purpose: test Partial Change func
     """
-    base_graph = nx.random_graphs.barabasi_albert_graph(1000,2)
+    base_graph = nx.random_graphs.barabasi_albert_graph(10000,2)
     # ---------------------------------------------------------↧
     record = {}
     temp = LN.FindRoute('./')
@@ -240,25 +241,27 @@ def test_partial_change(val):
     LPA(base_graph_path)
     Changed_com_path = base_graph_path+".com"
     # ---------------------------------------------------------
-    for i in range(0,100,1):
-        change_rate = i/100
+    for i in range(0,101,1):
+        change_rate = i/1000
         print("change_rate: ",change_rate,end = '\t')
+        PCstart = time.time()
         change_graph = val.PartialChange(base_graph, change_rate)
+        print("\nPC time: ", time.time() - PCstart)
         # ---------------------------------------------------------↧
+        IOstart = time.time()
         change_graph_path = './change_dta'
         with open(change_graph_path, "w+") as g:
             for e in change_graph.edges():
                 n1, n2 = e
                 g.write(str(n1) + " " + str(n2) + "\n")
-        start = time.time()
-        G_out = LN.LoadNetworkEntrance(temp, base_graph_path, change_graph_path, Changed_com_path)
-        t = time.time() - start
-        print(t)
-        record[change_rate] = t
+        print("IO time:", time.time() - IOstart)
+        G_out,BStime = LN.LoadNetworkEntrance(temp, base_graph_path, change_graph_path, Changed_com_path)
+        print("BS time:", BStime)
+        record[change_rate] = BStime
         # ---------------------------------------------------------
-        # n_rate, e_rate = val.CompareTwoGraph(base_graph,change_graph)
+        n_rate, e_rate = val.CompareTwoGraph(base_graph,change_graph)
         # if DebugFlag is True:
-            # print("\t","NodeRate %.3f"%n_rate,"  ","EdgeRate %.3f"%e_rate)
+        #     print("\t","NodeRate %.3f"%n_rate,"  ","EdgeRate %.3f"%e_rate)
     pickle.dump(record, open('./dict.pkl', 'wb'))
 
 if __name__ == '__main__':
