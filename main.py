@@ -2,19 +2,18 @@
 from BoundarySearch import LoadNetwork as LN
 from Louvain_Algorithm import Louvain
 from LPA_Algorithm import LPA
+from DEMON_Algorithm import DEMON
 import time
 
-# LN.LoadNetworkEntrance()
 
-# graph_path = "./data/2004"
-data_path = "./data/"
+data_path = "./data/Sx-superuser/"
 
 if __name__ == "__main__":
     # init
     temp = LN.FindRoute(data_path)
     files = temp.PairFile()
-    start = time.time()
-
+    BS_time_l = []
+    Method_time_l = []
     # find com
     for i in range(len(files)):
         # input ---> two graph
@@ -28,7 +27,9 @@ if __name__ == "__main__":
 
         if i == 0: # for the first time, graph is the file1 (2004-04)
             # find changed graph's communities
-            LPA(graph_path)
+            # LPA(graph_path)
+            # DEMON(graph_path)
+            Louvain(graph_path)
 
         # 2. Merge Changed Community and Original Community
         """
@@ -39,7 +40,8 @@ if __name__ == "__main__":
         merged_com = graph_path+".com"
 
         # find Changed Graph
-        G_out = LN.LoadNetworkEntrance(temp, file1, file2, merged_com) # NEED ATTENTION!! NEED MERGED COMMUNITY RESULTS!!
+        G_out, BS_time = LN.LoadNetworkEntrance(temp, file1, file2, merged_com) # NEED ATTENTION!! NEED MERGED COMMUNITY RESULTS!!
+        BS_time_l.append(BS_time)
 
         # output ---> write graph into disk
         changed_graph_path = file2 + "_changed"
@@ -49,7 +51,14 @@ if __name__ == "__main__":
                 f.write(str(n1) + " " + str(n2) + "\n")
 
         # find the community in the influenced path
-        LPA(changed_graph_path)
+        method_start = time.time()
+        
+        # LPA(changed_graph_path)
+        # DEMON(changed_graph_path)
+        Louvain(changed_graph_path)
+
+        Method_time_l.append(time.time() - method_start)
+        
         changed_graph_path_com = changed_graph_path+".com"
 
         # load the result and merge 
@@ -62,9 +71,10 @@ if __name__ == "__main__":
             for com in d.values():
                 output.write(com + "\n")
 
-        end = (time.time() - start) / (i + 1)
-        print("Time per loop:", end)
-
+    print("BS time")
+    [print(i) for i in BS_time_l]
+    print("Method time")
+    [print(i) for i in Method_time_l]
 
 
 

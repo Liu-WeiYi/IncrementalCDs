@@ -1,6 +1,7 @@
 # coding: utf-8
 
-import sys, os
+import sys, os, time, re
+from glob import glob
 
 def Louvain(filename):
     # 功能:
@@ -16,3 +17,14 @@ def Louvain(filename):
 # JUST FOR TEST
 #filename = "2004-04"
 #Louvain(filename)
+
+# file_dir = "./data/Sx-superuser/"
+# if __name__ == "__main__":
+#     t = []
+#     files = [_ for _ in glob(os.path.join(file_dir, '*')) if re.search('^\d{4}-\d{2}$', _.split('/')[-1])]
+#     for i in files:
+#         start = time.time()
+#         Louvain(i)
+#         t.append(time.time() - start)
+#     for _ in t:
+#         print(_)

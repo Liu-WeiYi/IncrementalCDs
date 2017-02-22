@@ -1,6 +1,8 @@
 #!/usr/bin/env python3.5
 
 import os
+import re
+import time
 from math import log
 from glob import glob
 import networkx as nx
@@ -18,7 +20,7 @@ class FindRoute(object):
     
     def PairFile(self):
         '''Pair the files in the directory from day to day'''
-        files = [_ for _ in glob(os.path.join(self.file_dir, '200*')) if _.find('com') <= 0 and _.find('changed') <= 0]
+        files = [_ for _ in glob(os.path.join(self.file_dir, '*')) if re.search('^\d{4}-\d{2}$', _.split('/')[-1])]
         paired_list = list(zip(*[files[_:] for _ in range(2)]))
         return paired_list
     
@@ -47,10 +49,13 @@ class FindRoute(object):
         com_map = {i: com_num for com_num, com in zip(com_nums, com_content) for i in com}
         return com_map
     
-    def FindChanges(self, file1, file2):
+    def FindChanges(self, G1, G2):
         '''Find all the changes btn two networks'''
-        self.G1 = self.LoadNetworkFile(file1)
-        self.G2 = self.LoadNetworkFile(file2)
+        # Input: two networks
+        #        EXAMPLE: G1 = LoadNetworkFile(file1)
+        #                 G2 = LoadNetworkFile(file2)
+        self.G1 = G1
+        self.G2 = G2
         G1_node = set(self.G1.nodes())
         G2_node = set(self.G2.nodes())
         G1_edge = set(self.G1.edges())
@@ -69,7 +74,6 @@ class FindRoute(object):
         del_nodes_still_nodes = [k for i, j in del_ndoes_influence.items() for k in j if k in G2_node]
         remove_new_nodes = {i: self.G2.neighbors(i) for i in del_nodes_still_nodes if i in G2_node}
         all_changes.update({i: [k for k in j if k in G1_node] for i, j in remove_new_nodes.items()})
-        # all_changes.update({i: self.G2.neighbors(i) for i in del_nodes_still_nodes if i in G2_node})
         if add_edges:
             add_nodes_links = [(_, __) for _ in self.add_nodes for __ in self.G2.neighbors(_)]
             add_edges = list(set(add_edges) - set(add_nodes_links) - set(tuple(reversed(i)) for i in add_nodes_links))
@@ -92,15 +96,15 @@ class FindRoute(object):
         all_changes = {i:j for i,j in all_changes.items() if j != []}
         return all_changes
     
-    def FindSameCom(self, Com_result, file1, file2):
+    def FindSameCom(self, com_map, G1, G2):
         '''Check whether the changes'''
-        # input: community resule file, paired file
+        # input: community map(the output of function LoadCommunityFile), paired networks
         # output {1: [2, 3], 2: [3, 4]}
-        com_map = self.LoadCommunityFile(Com_result)
-        all_changes = self.FindChanges(file1, file2)
+        self.com_map = com_map
+        all_changes = self.FindChanges(G1, G2)
         layer = {}
         layer.update({i: j for i, j in all_changes.items() if i in self.add_nodes})
-        layer.update({i: [k for k in j if com_map[i] == com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
+        layer.update({i: [k for k in j if self.com_map[i] == self.com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
         return layer
     
     def CalculateEntropy(self, node_a, node_b):
@@ -110,8 +114,6 @@ class FindRoute(object):
         degree_a = len(self.G2.neighbors(node_a))
         degree_b = len(self.G2.neighbors(node_b))
         degree_tot = len(self.G2_edge)
-        # denom = comb(degree_tot, degree_a)
-        # num = comb(degree_tot - degree_b, degree_a) 
         denom = comb(degree_tot, degree_b)
         num = comb(degree_tot - degree_a, degree_b) 
         p_ab = 1 - num / denom
@@ -125,25 +127,31 @@ class FindRoute(object):
         route = []
         nround = 1
         while accum <= self.accum_threshold:
+            if pair_input == []:
+                return route
             result = []
             result = [self.CalculateEntropy(*i) for i in pair_input]
             min_index = np.argmin(result)
             max_index = np.argmax(result)
             if result[min_index] < self.mean_threshold or nround < 2:
-                route.append(pair_input[max_index])
                 accum += result[max_index]
-                pair_input = [(pair_input[max_index][1], i) for i in self.G2.neighbors(pair_input[max_index][1])]
+                route = route + pair_input
+
+                new_start_node = pair_input[max_index][1]
+                if new_start_node not in self.add_nodes:
+                    new_node_com = self.com_map[new_start_node]
+                    new_neighbors = [_ for _ in self.G2.neighbors(new_start_node) if _ not in self.add_nodes and self.com_map[_] == new_node_com]
+                elif new_start_node in self.add_nodes:
+                    new_neighbors = [_ for _ in self.G2.neighbors(new_start_node)]
+                pair_input = [(new_start_node, _) for _ in new_neighbors]
                 nround += 1
             else:
                 break
-        # num_layers = len(route)
-        # mean_information_gain = accum / num_layers
-        # print("Route is", route)
         return route
     
-    def Route(self, Com_result, file1, file2):
+    def Route(self, com_map, G1, G2):
         '''Find the best route'''
-        layer = self.FindSameCom(Com_result, file1, file2)
+        layer = self.FindSameCom(com_map, G1, G2)
         pair = [[(x, k) for k in y] for x, y in layer.items()]
         result = []
         for i in pair:
@@ -153,17 +161,7 @@ class FindRoute(object):
         G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
         G_out.add_nodes_from(G_out_nodes)
         G_out.add_edges_from(result)
-        return(G_out)
-
-
-# if __name__ == "__main__":
-#     os.chdir('/Users/pengfeiwang/Desktop/inc/IncrementalCDs/')
-#     temp = FindRoute('./data/')
-#     files = temp.PairFile()
-#     # temp.FindChanges(*files[0])
-#     Com_result = './data/2004-06.com'
-#     # temp.FindSameCom(Com_result, *files[0])
-#     result = temp.Route(Com_result, *files[2])
+        return G_out
 
 
 def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
@@ -171,14 +169,20 @@ def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
     Entrance Func
     Return Changed Graph
     """
-    Com_result = Changed_com_path
-    return temp.Route(Com_result, file1, file2)
+    com_map = temp.LoadCommunityFile(Changed_com_path)
+    G1 = temp.LoadNetworkFile(file1)
+    G2 = temp.LoadNetworkFile(file2)
+    start = time.time()
+    output = temp.Route(com_map, G1, G2)
+    t = time.time() - start
+    return output, t
   
 
 def MergeNewCom(temp, old_com, file2, changed_com):
     '''Merge the old and changed one, return the new community'''
     old_com = temp.LoadCommunityFile(old_com)
     file2 = temp.LoadNetworkFile(file2)
+
     # keep unchanged one and assign changed nodes new communities
     new_del = {i: j for i, j in old_com.items() if i in file2.nodes()}
     old_com_max = max(new_del.values())

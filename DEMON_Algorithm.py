@@ -1,8 +1,9 @@
 # coding: utf-8
 
-import sys, os
+import sys, os, time, re
+from glob import glob
 
-def LPA(filename,overlap_rate = 0.1):
+def DEMON(filename,overlap_rate = 0.1):
     # 功能:
     #   LPA 社团发现算法的Wrapper
     # 输入: 
@@ -14,5 +15,16 @@ def LPA(filename,overlap_rate = 0.1):
 
 
 # JUST FOR TEST
-filename = "2004-04"
-LPA(filename)
+# filename = "./data/CollegeMsg/2004-10"
+# DEMON(filename)
+
+# file_dir = "./data/Sx-superuser/"
+# if __name__ == "__main__":
+#     t = []
+#     files = [_ for _ in glob(os.path.join(file_dir, '*')) if re.search('^\d{4}-\d{2}$', _.split('/')[-1])]
+#     for i in files:
+#         start = time.time()
+#         DEMON(i)
+#         t.append(time.time() - start)
+#     for _ in t:
+#         print(_)
