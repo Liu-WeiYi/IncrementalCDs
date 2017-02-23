@@ -39,7 +39,8 @@ class FindRoute(object):
         G.add_edges_from(l_edges)
         return G
     
-    def LoadCommunityFile(self, com_file):
+    @staticmethod
+    def LoadCommunityFile(com_file):
         '''Load the communities result'''
         # input: community detection file
         # output: dictionary, key is nodes, value is community
