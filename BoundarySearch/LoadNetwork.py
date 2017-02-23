@@ -1,5 +1,5 @@
 #!/usr/bin/env python3.5
-
+# coding: utf-8
 import os
 import re
 import time
@@ -24,7 +24,8 @@ class FindRoute(object):
         paired_list = list(zip(*[files[_:] for _ in range(2)]))
         return paired_list
     
-    def LoadNetworkFile(self, file):
+    @staticmethod
+    def LoadNetworkFile(file):
         '''Construct the network'''
         # input: the file path
         # output: the network of the file
