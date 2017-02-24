@@ -27,13 +27,17 @@ class FindRoute(object):
         # input: the file path
         # output: the network of the file
         file_name = file.split('/')[-1]
-        network = open(file, encoding='utf-8').readlines()
-        network = [list(map(int, _.split())) for _ in network]
-        l_edges = [tuple(_) for _ in network]
-        l_nodes = list(set(sum(network, [])))
+        # network = open(file, encoding='utf-8').readlines()
+        # network = [list(map(int, _.split())) for _ in network]
+        # l_edges = [tuple(_) for _ in network]
+        # l_nodes = list(set(sum(network, [])))
         G = nx.Graph(day=file_name)
-        G.add_nodes_from(l_nodes)
-        G.add_edges_from(l_edges)
+        with open(file,"r+") as f:
+            for line in f.readlines():
+                n1,n2 = line.strip().split()
+                G.add_edge(n1,n2)
+        # G.add_nodes_from(l_nodes)
+        # G.add_edges_from(l_edges)
         return G
     
     def LoadCommunityFile(self, com_file):
@@ -102,8 +106,11 @@ class FindRoute(object):
         self.com_map = com_map
         all_changes = self.FindChanges(G1, G2)
         layer = {}
-        layer.update({i: j for i, j in all_changes.items() if i in self.add_nodes})
-        layer.update({i: [k for k in j if self.com_map[i] == self.com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
+        try:
+            layer.update({i: j for i, j in all_changes.items() if i in self.add_nodes})
+            layer.update({i: [k for k in j if self.com_map[i] == self.com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
+        except:
+            pass
         return layer
     
     def CalculateEntropy(self, node_a, node_b):
@@ -161,9 +168,13 @@ class FindRoute(object):
             if i != []:
                 result += self.CalculateEntropyPath(i) 
         G_out = nx.Graph(day='output_nx')
-        G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
-        G_out.add_nodes_from(G_out_nodes)
-        G_out.add_edges_from(result)
+        try:
+            G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
+            G_out.add_nodes_from(G_out_nodes)
+            G_out.add_edges_from(result)
+        except:
+            pass
+        
         return G_out
 
 
@@ -173,8 +184,14 @@ def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
     Return Changed Graph
     """
     com_map = temp.LoadCommunityFile(Changed_com_path)
+
+    print("READ GRAPH...",end = " ")
+    start = time.time()
     G1 = temp.LoadNetworkFile(file1)
     G2 = temp.LoadNetworkFile(file2)
+    print("TIME = ", end = " ")
+    print(time.time()-start)
+    
     start = time.time()
     output = temp.Route(com_map, G1, G2)
     t = time.time() - start

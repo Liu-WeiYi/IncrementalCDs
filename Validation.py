@@ -110,7 +110,7 @@ class Validation:
         # select changed nodes
         changed_node_list = random.sample(nodes,changed_node_size)
         if DebugFlag is True:
-            print("Size: ",len(changed_node_list),end = "  ")
+            print("Size: ",len(changed_node_list))
 
         for node in changed_node_list:
             # for each node, change the behavior of it
@@ -229,39 +229,58 @@ def test_partial_change(val):
     """
     Purpose: test Partial Change func
     """
-    base_graph = nx.random_graphs.barabasi_albert_graph(10000,2)
-    # ---------------------------------------------------------↧
-    record = {}
-    temp = LN.FindRoute('./')
-    base_graph_path = './base_dta'
-    with open(base_graph_path, "w+") as f:
-        for e in base_graph.edges():
-            n1, n2 = e
-            f.write(str(n1) + " " + str(n2) + "\n")
-    LPA(base_graph_path)
-    Changed_com_path = base_graph_path+".com"
-    # ---------------------------------------------------------
-    for i in range(0,101,1):
-        change_rate = i/1000
-        print("change_rate: ",change_rate,end = '\t')
-        PCstart = time.time()
-        change_graph = val.PartialChange(base_graph, change_rate)
-        print("\nPC time: ", time.time() - PCstart)
+    # node_number = input("Please input node number:\t")
+    node_number_list = [10000 for i in range(100)]
+    count = 0
+    for node_number in node_number_list:
+        count += 1
+        base_graph = nx.random_graphs.barabasi_albert_graph(int(node_number),2)
+        # pickle.dump(base_graph,open("base_graph_1M.pickle","wb"))
         # ---------------------------------------------------------↧
-        IOstart = time.time()
-        change_graph_path = './change_dta'
-        with open(change_graph_path, "w+") as g:
-            for e in change_graph.edges():
+        record = {}
+        temp = LN.FindRoute('./')
+        base_graph_path = './base_dta'
+        with open(base_graph_path, "w+") as f:
+            for e in base_graph.edges():
                 n1, n2 = e
-                g.write(str(n1) + " " + str(n2) + "\n")
-        print("IO time:", time.time() - IOstart)
-        G_out,BStime = LN.LoadNetworkEntrance(temp, base_graph_path, change_graph_path, Changed_com_path)
-        print("BS time:", BStime)
-        record[change_rate] = BStime
+                f.write(str(n1) + " " + str(n2) + "\n")
+        LPA(base_graph_path)
+        Changed_com_path = base_graph_path+".com"
         # ---------------------------------------------------------
-        n_rate, e_rate = val.CompareTwoGraph(base_graph,change_graph)
-        # if DebugFlag is True:
-        #     print("\t","NodeRate %.3f"%n_rate,"  ","EdgeRate %.3f"%e_rate)
+        for i in range(0,101,1):
+            change_rate = i/1000
+            print("change_rate: ",change_rate, end='\t')
+            PCstart = time.time()
+            # change_graph = val.PartialChange(base_graph, change_rate)
+            
+            nodes = base_graph.nodes()
+            changed_node_size = int(len(nodes)*change_rate)
+            if changed_node_size == 0: # guarantee that at least one node will change
+                changed_node_size = 1
+            changed_graph = copy.deepcopy(base_graph)
+            changed_node_list = random.sample(nodes,changed_node_size)
+            
+            change_graph = copy.deepcopy(base_graph)
+            changed_node = base_graph.nodes()
+            print("\nPC time: ", time.time() - PCstart)
+            # ---------------------------------------------------------↧
+            IOstart = time.time()
+            change_graph_path = './change_dta'
+            with open(change_graph_path, "w+") as g:
+                for e in change_graph.edges():
+                    n1, n2 = e
+                    if n1 not in changed_node_list and n2 not in changed_node_list:
+                        g.write(str(n1) + " " + str(n2) + "\n")
+            print("IO time:", time.time() - IOstart)
+            G_out,BStime = LN.LoadNetworkEntrance(temp, base_graph_path, change_graph_path, Changed_com_path)
+            print("BS time:", BStime)
+            record[change_rate] = BStime
+            with open('./SyntheticData/%s_%d.time'%(node_number,count),'a+') as f:
+                f.write(str(change_rate)+'\t'+str(BStime)+'\n')
+            # ---------------------------------------------------------
+            n_rate, e_rate = val.CompareTwoGraph(base_graph,change_graph)
+            # if DebugFlag is True:
+            #     print("\t","NodeRate %.3f"%n_rate,"  ","EdgeRate %.3f"%e_rate)
     pickle.dump(record, open('./dict.pkl', 'wb'))
 
 if __name__ == '__main__':
