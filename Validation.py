@@ -230,7 +230,7 @@ def test_partial_change(val):
     Purpose: test Partial Change func
     """
     # node_number = input("Please input node number:\t")
-    node_number_list = [10000 for i in range(100)]
+    node_number_list = [1000 for i in range(100)]
     count = 0
     for node_number in node_number_list:
         count += 1
@@ -248,7 +248,7 @@ def test_partial_change(val):
         Changed_com_path = base_graph_path+".com"
         # ---------------------------------------------------------
         for i in range(0,101,1):
-            change_rate = i/1000
+            change_rate = i/100
             print("change_rate: ",change_rate, end='\t')
             PCstart = time.time()
             # change_graph = val.PartialChange(base_graph, change_rate)
