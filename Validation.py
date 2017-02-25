@@ -230,11 +230,11 @@ def test_partial_change(val):
     Purpose: test Partial Change func
     """
     # node_number = input("Please input node number:\t")
-    node_number_list = [1000 for i in range(100)]
+    node_number_list = [10000 for i in range(100)]
     count = 0
     for node_number in node_number_list:
         count += 1
-        base_graph = nx.random_graphs.barabasi_albert_graph(int(node_number),2)
+        base_graph = nx.random_graphs.barabasi_albert_graph(int(node_number),3)
         # pickle.dump(base_graph,open("base_graph_1M.pickle","wb"))
         # ---------------------------------------------------------↧
         record = {}
@@ -275,7 +275,7 @@ def test_partial_change(val):
             G_out,BStime = LN.LoadNetworkEntrance(temp, base_graph_path, change_graph_path, Changed_com_path)
             print("BS time:", BStime)
             record[change_rate] = BStime
-            with open('./SyntheticData/%s_%d.time'%(node_number,count),'a+') as f:
+            with open('./SyntheticData/10000_全变化/%s_%d.time'%(node_number,count),'a+') as f:
                 f.write(str(change_rate)+'\t'+str(BStime)+'\n')
             # ---------------------------------------------------------
             n_rate, e_rate = val.CompareTwoGraph(base_graph,change_graph)
