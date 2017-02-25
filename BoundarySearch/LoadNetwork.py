@@ -20,7 +20,7 @@ class FindRoute(object):
     
     def PairFile(self):
         '''Pair the files in the directory from day to day'''
-        files = [_ for _ in glob(os.path.join(self.file_dir, '*')) if re.search('^\d{4}-\d{2}$', _.split('/')[-1])]
+        files = [_ for _ in glob(os.path.join(self.file_dir, '*')) if re.search('^\d{4}-\d{2}.+', _.split('/')[-1]) and '.com' not in _]
         paired_list = list(zip(*[files[_:] for _ in range(2)]))
         return paired_list
     
@@ -128,9 +128,11 @@ class FindRoute(object):
         accum = 0
         route = []
         nround = 1
+        been_route = []
         while accum <= self.accum_threshold:
             if pair_input == []:
                 return route
+            been_route.append(pair_input[0][0])
             result = []
             result = [self.CalculateEntropy(*i) for i in pair_input]
             min_index = np.argmin(result)
@@ -145,6 +147,7 @@ class FindRoute(object):
                     new_neighbors = [_ for _ in self.G2.neighbors(new_start_node) if _ not in self.add_nodes and self.com_map[_] == new_node_com]
                 elif new_start_node in self.add_nodes:
                     new_neighbors = [_ for _ in self.G2.neighbors(new_start_node)]
+                new_neighbors = [_ for _ in new_neighbors if _ not in been_route]
                 pair_input = [(new_start_node, _) for _ in new_neighbors]
                 nround += 1
             else:
@@ -187,7 +190,12 @@ def MergeNewCom(temp, old_com, file2, changed_com):
 
     # keep unchanged one and assign changed nodes new communities
     new_del = {i: j for i, j in old_com.items() if i in file2.nodes()}
-    old_com_max = max(new_del.values())
+    #  START REVISE
+    try:
+        old_com_max = max(new_del.values())
+    except:
+        old_com_max = 0
+    ## END OF REVISE
     changed_com = temp.LoadCommunityFile(changed_com)
     changed_com_update = {i: j + old_com_max for i, j in changed_com.items()}
     new_del.update(changed_com_update)
