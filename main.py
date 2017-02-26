@@ -6,7 +6,7 @@ from DEMON_Algorithm import DEMON
 import time
 
 
-data_path = "./data/Sx-superuser/"
+data_path = "./data/Email_EU_daily/"
 
 if __name__ == "__main__":
     # init
@@ -28,8 +28,8 @@ if __name__ == "__main__":
         if i == 0: # for the first time, graph is the file1 (2004-04)
             # find changed graph's communities
             # LPA(graph_path)
-            # DEMON(graph_path)
-            Louvain(graph_path)
+            DEMON(graph_path)
+            # Louvain(graph_path)
 
         # 2. Merge Changed Community and Original Community
         """
@@ -54,8 +54,8 @@ if __name__ == "__main__":
         method_start = time.time()
         
         # LPA(changed_graph_path)
-        # DEMON(changed_graph_path)
-        Louvain(changed_graph_path)
+        DEMON(changed_graph_path)
+        # Louvain(changed_graph_path)
 
         Method_time_l.append(time.time() - method_start)
         
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
     print("BS time")
     [print(i) for i in BS_time_l]
-    print("Method time")
+    print("\nMethod time")
     [print(i) for i in Method_time_l]
 
 

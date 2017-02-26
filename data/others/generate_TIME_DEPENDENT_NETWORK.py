@@ -5,7 +5,7 @@ import time
 import networkx as nx
 import matplotlib.pyplot as plt
 
-ori_file = open("./data/Sx-superuser/sx-superuser.txt", 'r+')
+ori_file = open("./CollegeMsg.txt", 'r+')
 all_time = set()
 Time_dependent_networks = {}
 
@@ -21,11 +21,11 @@ for line in ori_file.readlines():
     """
     1. 做以天为单位的
     """
-    # current_date = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(int(utc))).split("T")[0]
+    current_date = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(int(utc))).split("T")[0]
     """
     2. 做以月为单位的
     """
-    current_date = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(int(utc))).split("T")[0][:-3]
+    # current_date = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(int(utc))).split("T")[0][:-3]
     
     # 提取"无向/无权"网络
     if current_date not in all_time:
