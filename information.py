@@ -17,14 +17,13 @@ def nmi_non_olp(coms1, coms2):
     :return: 归一化互信息值
     """
     # 各社团元素集合
+    q = lambda x: -x*np.log2(x) if np.abs(x)>0.00001 else 0
     coms1_nodes = set()
     coms2_nodes = set()
     for com in coms1:
         coms1_nodes.update(com)
-
     for com in coms2:
         coms2_nodes.update(com)
-
     # 获取各个社团集合的总规模
     coms1_nodes_num = len(coms1_nodes)
     coms2_nodes_num = len(coms2_nodes)
@@ -47,7 +46,7 @@ def nmi_non_olp(coms1, coms2):
             _n_com_1_2 = len(set(com1) & set(com2))
             if _n_com_1_2 is not 0:
                 _p = _n_com_1_2 / cross_nodes_num
-                _H_C1_C2 += q(_p)
+                _H_C1_C2 += q(_p)    
     _MI_2 = _H_C1 + _H_C2 - _H_C1_C2
     if abs(_H_C1 + _H_C2) < 0.0001:
         return 0.0
@@ -68,12 +67,14 @@ def LoadCommunityFile(com_file):
 def calc_info(file1, file2):
     coms1 = LoadCommunityFile(file1)
     coms2 = LoadCommunityFile(file2)
-    nmi_non_olp(coms1, coms2)
+    print(nmi_non_olp(coms1, coms2))
 
 if __name__ == "__main__":
     os.chdir('./data/Sx-stackoverflow/')
     approx_files = [_ for _ in os.listdir() if "_approx_merge_" in _]
+    approx_files = approx_files[-3:]
     regular_files = [_ for _ in os.listdir() if "_regular_merge_" in _]
+    regular_files = regular_files[-3:]
     zipped = list(zip(approx_files, regular_files))
     for i in zipped:
-        print(calc_info(*i))
+        calc_info(*i)

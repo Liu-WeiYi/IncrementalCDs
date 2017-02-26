@@ -20,7 +20,7 @@ class FindRoute(object):
     
     def PairFile(self):
         '''Pair the files in the directory from day to day'''
-        files = [_ for _ in glob(os.path.join(self.file_dir, '*')) if re.search('^\d{4}-\d{2}.+', _.split('/')[-1]) and '.com' not in _]
+        files = [_ for _ in glob(os.path.join(self.file_dir, '*')) if re.search('^\d{4}-\d{2}-\d{2}$', _.split('/')[-1]) and '.com' not in _]
         paired_list = list(zip(*[files[_:] for _ in range(2)]))
         return paired_list
     
@@ -163,7 +163,10 @@ class FindRoute(object):
             if i != []:
                 result += self.CalculateEntropyPath(i) 
         G_out = nx.Graph(day='output_nx')
-        G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
+        try:
+            G_out_nodes = list(set(reduce(lambda x, y: x + y, result)))
+        except:
+            G_out_nodes = []
         G_out.add_nodes_from(G_out_nodes)
         G_out.add_edges_from(result)
         return G_out

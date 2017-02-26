@@ -93,7 +93,7 @@ def LoadCommunityFile(com_file):
     return com_content
 
 if __name__ == "__main__":
-    file = './data/Sx-stackoverflow/2008-12'
+    file = './data/Sx-stackoverflow/2016-02'
     # 2008-12
     # 2013-01
     # 2016-02
@@ -123,7 +123,7 @@ if __name__ == "__main__":
                 _.remove(i)
         partial_node = set(reduce(lambda x, y: x + y, partial_com))
         naive_com = list(map(lambda x: list(set(x) - set(partial_node)), naive_com))
-        naive_com.insert(len(naive_com), partial_com)
+        naive_com = naive_com + partial_com
         merge_output = file + "_approx_merge_" + str(num + 1)
         with open(merge_output, "w+") as fff:
             for com in naive_com:
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     #             _.remove(i)
     #     partial_node = set(reduce(lambda x, y: x + y, partial_com))
     #     naive_com = list(map(lambda x: list(set(x) - set(partial_node)), naive_com))
-    #     naive_com.insert(len(naive_com), partial_com)
+    #     naive_com = naive_com + partial_com
     #     merge_output = file + "_regular_merge_" + str(num + 1)
     #     with open(merge_output, "w+") as fff:
     #         for com in naive_com:
