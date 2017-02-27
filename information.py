@@ -72,9 +72,9 @@ def calc_info(file1, file2):
 if __name__ == "__main__":
     os.chdir('./data/Sx-stackoverflow/')
     approx_files = [_ for _ in os.listdir() if "_approx_merge_" in _]
-    approx_files = approx_files[-3:]
+    approx_files = approx_files
     regular_files = [_ for _ in os.listdir() if "_regular_merge_" in _]
-    regular_files = regular_files[-3:]
+    regular_files = regular_files
     zipped = list(zip(approx_files, regular_files))
     for i in zipped:
         calc_info(*i)
