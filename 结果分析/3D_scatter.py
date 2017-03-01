@@ -35,6 +35,11 @@ for filename in all_files_name:
 
     ax.set_xlabel("Time Stamp")
     ax.set_ylabel("Change Avg")
+
+    ax.set_xbound(0)
+    ax.set_ybound(0)
+
+
     ax.set_zlabel("Increase Avg")
     plt.savefig("Datasets/%s.pdf"%filename)
     plt.savefig("Datasets/%s.png"%filename)

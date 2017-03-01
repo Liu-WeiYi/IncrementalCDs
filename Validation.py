@@ -230,7 +230,7 @@ def test_partial_change(val):
     Purpose: test Partial Change func
     """
     # node_number = input("Please input node number:\t")
-    node_number_list = [10000 for i in range(100)]
+    node_number_list = [100000 for i in range(40)]
     count = 0
     for node_number in node_number_list:
         count += 1
@@ -265,23 +265,24 @@ def test_partial_change(val):
             print("\nPC time: ", time.time() - PCstart)
             # ---------------------------------------------------------↧
             IOstart = time.time()
-            change_graph_path = './change_dta'
-            with open(change_graph_path, "w+") as g:
-                for e in change_graph.edges():
-                    n1, n2 = e
-                    if n1 not in changed_node_list and n2 not in changed_node_list:
-                        g.write(str(n1) + " " + str(n2) + "\n")
+            # change_graph_path = './change_dta'
+            # with open(change_graph_path, "w+") as g:
+            #     for e in change_graph.edges():
+            #         n1, n2 = e
+            #         if n1 not in changed_node_list and n2 not in changed_node_list:
+            #             g.write(str(n1) + " " + str(n2) + "\n")
             print("IO time:", time.time() - IOstart)
-            G_out,BStime = LN.LoadNetworkEntrance(temp, base_graph_path, change_graph_path, Changed_com_path)
+            # G_out,BStime = LN.LoadNetworkEntrance(temp, base_graph_path, change_graph_path, Changed_com_path)
+            G_out,BStime = LN.LoadNetworkEntrance(temp, base_graph, change_graph, Changed_com_path)
             print("BS time:", BStime)
             record[change_rate] = BStime
-            with open('./SyntheticData/10000_全变化/%s_%d.time'%(node_number,count),'a+') as f:
+            with open('./SyntheticData/%s_全变化/%s_%d.time'%(node_number,node_number,count+10),'a+') as f:
                 f.write(str(change_rate)+'\t'+str(BStime)+'\n')
             # ---------------------------------------------------------
             n_rate, e_rate = val.CompareTwoGraph(base_graph,change_graph)
             # if DebugFlag is True:
             #     print("\t","NodeRate %.3f"%n_rate,"  ","EdgeRate %.3f"%e_rate)
-    pickle.dump(record, open('./dict.pkl', 'wb'))
+    # pickle.dump(record, open('./dict.pkl', 'wb'))
 
 if __name__ == '__main__':
 

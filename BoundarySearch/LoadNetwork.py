@@ -187,8 +187,10 @@ def LoadNetworkEntrance(temp, file1, file2, Changed_com_path):
 
     print("READ GRAPH...",end = " ")
     start = time.time()
-    G1 = temp.LoadNetworkFile(file1)
-    G2 = temp.LoadNetworkFile(file2)
+    # G1 = temp.LoadNetworkFile(file1)
+    G1 = file1
+    # G2 = temp.LoadNetworkFile(file2)
+    G2 = file2
     print("TIME = ", end = " ")
     print(time.time()-start)
     
