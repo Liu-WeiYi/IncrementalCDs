@@ -18,12 +18,14 @@ class FindRoute(object):
         # if mean_threshold too small, may result in no community in changes nodes
         self.mean_threshold = mean_threshold
     
+
     def PairFile(self):
-        '''Pair the files in the directory from day to day'''
+        '''Pair the files in the directory'''
         files = [_ for _ in glob(os.path.join(self.file_dir, '*')) if re.search('^\d{4}-\d{2}-\d{2}$', _.split('/')[-1]) and '.com' not in _]
         paired_list = list(zip(*[files[_:] for _ in range(2)]))
         return paired_list
     
+
     @staticmethod
     def LoadNetworkFile(file):
         '''Construct the network'''
@@ -39,6 +41,7 @@ class FindRoute(object):
         G.add_edges_from(l_edges)
         return G
     
+
     @staticmethod
     def LoadCommunityFile(com_file):
         '''Load the communities result'''
@@ -51,6 +54,7 @@ class FindRoute(object):
         com_map = {i: com_num for com_num, com in zip(com_nums, com_content) for i in com}
         return com_map
     
+
     def FindChanges(self, G1, G2):
         '''Find all the changes btn two networks'''
         # Input: two networks
@@ -98,8 +102,9 @@ class FindRoute(object):
         all_changes = {i:j for i,j in all_changes.items() if j != []}
         return all_changes
     
+
     def FindSameCom(self, com_map, G1, G2):
-        '''Check whether the changes'''
+        '''Check whether the changes in the same community'''
         # input: community map(the output of function LoadCommunityFile), paired networks
         # output {1: [2, 3], 2: [3, 4]}
         self.com_map = com_map
@@ -109,6 +114,7 @@ class FindRoute(object):
         layer.update({i: [k for k in j if self.com_map[i] == self.com_map[k]] for i, j in all_changes.items() if i not in self.add_nodes})
         return layer
     
+
     def CalculateEntropy(self, node_a, node_b):
         '''Calculate the entropy between two nodes'''
         # input: the links btw two nodes (4, 1)
@@ -121,6 +127,7 @@ class FindRoute(object):
         p_ab = 1 - num / denom
         influence = -log(p_ab)  
         return influence
+
 
     def CalculateEntropyPath(self, pair_input):
         '''Calculate the shortest route'''
@@ -154,6 +161,7 @@ class FindRoute(object):
                 break
         return route
     
+
     def Route(self, com_map, G1, G2):
         '''Find the best route'''
         layer = self.FindSameCom(com_map, G1, G2)
@@ -190,25 +198,20 @@ def MergeNewCom(temp, old_com, file2, changed_com):
     '''Merge the old and changed one, return the new community'''
     old_com = temp.LoadCommunityFile(old_com)
     file2 = temp.LoadNetworkFile(file2)
-
     # keep unchanged one and assign changed nodes new communities
     new_del = {i: j for i, j in old_com.items() if i in file2.nodes()}
-    #  START REVISE
     try:
         old_com_max = max(new_del.values())
     except:
         old_com_max = 0
-    ## END OF REVISE
     changed_com = temp.LoadCommunityFile(changed_com)
     changed_com_update = {i: j + old_com_max for i, j in changed_com.items()}
     new_del.update(changed_com_update)
-
     left_nodes = list(set(file2.nodes()) - set(new_del.keys()))
     old_com_max = max(new_del.values())
     num = len(left_nodes)
     y = range(old_com_max + 1, old_com_max + num + 1)
     new_del.update({i: j for i, j in zip(left_nodes, y)})
-
     d = {}
     for key, value in new_del.items():
         d.setdefault(value, []).append(key)

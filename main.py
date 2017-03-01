@@ -1,9 +1,9 @@
 # coding: utf-8
-from BoundarySearch import LoadNetwork as LN
-from Louvain_Algorithm import Louvain
+import time
 from LPA_Algorithm import LPA
 from DEMON_Algorithm import DEMON
-import time
+from Louvain_Algorithm import Louvain
+from BoundarySearch import LoadNetwork as LN
 
 
 data_path = "./data/Email_EU_daily/"
@@ -71,10 +71,8 @@ if __name__ == "__main__":
             for com in d.values():
                 output.write(com + "\n")
 
-    print("BS time")
-    [print(i) for i in BS_time_l]
-    print("\nMethod time")
-    [print(i) for i in Method_time_l]
+    print("Boundary Search time: ", BS_time_l)
+    print("\nCommunity Detection time: ", Method_time_l)
 
 
 
