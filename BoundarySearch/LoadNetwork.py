@@ -127,7 +127,7 @@ class FindRoute(object):
         p_ab = 1 - num / denom
         influence = -log(p_ab)  
         return influence
-    
+
     def CalculateEntropyPath(self, pair_input):
         '''Calculate the shortest route'''
         # input [(4, 1), (4, 3)]
