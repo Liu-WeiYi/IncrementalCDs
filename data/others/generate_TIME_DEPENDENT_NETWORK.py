@@ -18,14 +18,14 @@ for line in ori_file.readlines():
         print('processed %d lines'%count)
     # 提取所需要的时间等信息
     src, dst, utc = line.strip().split(' ')
-    """
-    1. 做以天为单位的
-    """
+    # 1. 做以天为单位的
     current_date = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(int(utc))).split("T")[0]
-    """
-    2. 做以月为单位的
-    """
+
+    # 2. 做以月为单位的
     # current_date = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(int(utc))).split("T")[0][:-3]
+    
+    # 3. 做以秒为单位的
+    # current_date = time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(int(utc)))
     
     # 提取"无向/无权"网络
     if current_date not in all_time:
@@ -53,7 +53,8 @@ pickle.dump(Time_dependent_networks, open("Time_dependent_networks_Month.pickle"
 pickle.dump(all_time, open("all_time_Month.pickle", 'wb'))
 
 dta = pickle.load(open("Time_dependent_networks_Month.pickle", 'rb'))
-for i, j in dta.items():
+
+for i, j in Time_dependent_networks.items():
     with open(i, "w+") as g:
         for e in j.edges():
             n1, n2 = e
